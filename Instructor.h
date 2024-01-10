@@ -15,37 +15,37 @@ public:
     Instructor(const std::string& last, const std::string& phone, double rate)
         : lastName(last), phoneNumber(phone), hourlyRate(rate) {}
 
-    std::string getLastName() const 
+    std::string getLastName() const
     {
         return lastName;
     }
 
-    std::string getPhoneNumber() const 
+    std::string getPhoneNumber() const
     {
         return phoneNumber;
     }
 
-    double getHourlyRate() const 
+    double getHourlyRate() const
     {
         return hourlyRate;
     }
 
-    std::vector<std::shared_ptr<Lesson>> getSchedule() const 
+    std::vector<std::shared_ptr<Lesson>> getSchedule() const
     {
         return schedule;
     }
 
-    void setLastName(const std::string& last) 
+    void setLastName(const std::string& last)
     {
         lastName = last;
     }
 
-    void setPhoneNumber(const std::string& phone) 
+    void setPhoneNumber(const std::string& phone)
     {
         phoneNumber = phone;
     }
 
-    void setHourlyRate(double rate) 
+    void setHourlyRate(double rate)
     {
         hourlyRate = rate;
     }

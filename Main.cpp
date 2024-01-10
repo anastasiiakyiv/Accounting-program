@@ -55,9 +55,9 @@
 // #include <vector>
 #include <sstream>
 
-// // Specific libs
-// #include "Instructor.h"
-// #include "Lesson.h"
+ // Specific libs
+ #include "Lesson.h"
+ #include "Instructor.h"
 
 using namespace std;
 string textToSave;
@@ -95,6 +95,7 @@ void printSchedule(bool generalized, bool particularTrack, bool particularGroup,
 void groupAndStudentsManagement() {
 
 }
+
 
 // Tool Function 4
 void printMsg(int _window, string _text = "", int _w2 = -1, int _w3 = -1, int _w4 = -1) {  // Функція, яка друкує конкретне вікно діалогу.
