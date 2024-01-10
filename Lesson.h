@@ -1,12 +1,12 @@
 #pragma once
-#include "Trainer.h"
+#include "Instructor.h"
 #include "Group.h"
 
 class Lesson
 {
     int time;
     int trackNumber;
-    Trainer trainer;
+    Instructor instructor;
     Group group;
 
 public:
