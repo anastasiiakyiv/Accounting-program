@@ -2,7 +2,7 @@
 #include <vector>
 #include "Lesson.h"
 
-class Track
+class Lane
 {
     int number;
     std::vector<Lesson> schedule;
