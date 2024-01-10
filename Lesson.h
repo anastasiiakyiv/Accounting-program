@@ -1,14 +1,27 @@
 #pragma once
-#include "Instructor.h"
-#include "Group.h"
 
 class Lesson
 {
-    int time;
+    std::string time;
+    std::string dayOfWeek;
     int trackNumber;
-    Trainer trainer;
-    Group group;
 
 public:
+    Lesson(const std::string& lessonTime, int track, const std::string& day)
+        : time(lessonTime), trackNumber(track), dayOfWeek(day) {}
 
+    std::string getTime() const 
+    {
+        return time;
+    }
+
+    int getTrackNumber() const 
+    {
+        return trackNumber;
+    }
+
+    std::string getDayOfWeek() const 
+    {
+        return dayOfWeek;
+    }
 };
