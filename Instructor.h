@@ -1,17 +1,18 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <memory>
 #include "Lesson.h"
 
-class Trainer
+class Instructor
 {
     std::string lastName;
     std::string phoneNumber;
     double hourlyRate;
-    std::vector<Lesson> schedule;
+    std::vector<std::shared_ptr<Lesson>> schedule;
 
 public:
-    Trainer(const std::string& last, const std::string& phone, double rate)
+    Instructor(const std::string& last, const std::string& phone, double rate)
         : lastName(last), phoneNumber(phone), hourlyRate(rate) {}
 
     std::string getLastName() const 
@@ -29,7 +30,7 @@ public:
         return hourlyRate;
     }
 
-    std::vector<Lesson> getSchedule() const 
+    std::vector<std::shared_ptr<Lesson>> getSchedule() const 
     {
         return schedule;
     }
@@ -49,8 +50,8 @@ public:
         hourlyRate = rate;
     }
 
-    void setSchedule(const std::vector<Lesson>& newSchedule) 
+    void addLessonToSchedule(std::shared_ptr<Lesson> lesson)
     {
-        schedule = newSchedule;
+        schedule.push_back(lesson);
     }
 };
