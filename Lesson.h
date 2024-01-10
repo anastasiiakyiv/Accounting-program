@@ -1,5 +1,5 @@
 #pragma once
-#include "Trainer.h"
+#include "Instructor.h"
 #include "Group.h"
 
 class Lesson
