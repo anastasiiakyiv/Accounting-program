@@ -72,7 +72,7 @@ stringstream buffer;
 // Tool Function 1 | Save the latest console output, even the program closed or stopped abruptly.
 void save_file() {
   ofstream myfile;
-  myfile.open("PoolScheduleSearch.txt");
+  myfile.open("Schedule_history.txt");
   myfile << textToSave;
   myfile.close();
 }
