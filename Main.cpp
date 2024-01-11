@@ -55,9 +55,15 @@
 // #include <vector>
 #include <sstream>
 
- // Specific libs
- #include "Lesson.h"
- #include "Instructor.h"
+// Specific libs
+#include "Lane.h"
+#include "Instructor.h"
+#include "Group.h"
+
+#define RESET   "\033[0m"
+#define BLUE    "\033[34m"
+#define PURPLE  "\033[35m"
+#define RED     "\033[31m"      
 
 using namespace std;
 string textToSave;
@@ -66,7 +72,7 @@ stringstream buffer;
 // Tool Function 1 | Save the latest console output, even the program closed or stopped abruptly.
 void save_file() {
   ofstream myfile;
-  myfile.open ("GeneralPoolSchedule.txt");
+  myfile.open("PoolScheduleSearch.txt");
   myfile << textToSave;
   myfile.close();
 }
@@ -86,16 +92,15 @@ void printSchedule(bool generalized, bool particularTrack, bool particularGroup,
   if (particularGroup) buffer << "\nPrinting the schedule for the particular group.\n";
   if (particularPerson) buffer << "\nPrinting the schedule for the particular person.\n";
 
-  textToSave = buffer.str();
+  buffer >> textToSave;
   std::cout << textToSave << '\n';
   buffer.str("");
 }
 
 // Tool Function 3
-void groupAndStudentsManagement() {
+void groupsAndStudentsManagement() {
 
 }
-
 
 // Tool Function 4
 void printMsg(int _window, string _text = "", int _w2 = -1, int _w3 = -1, int _w4 = -1) {  // Функція, яка друкує конкретне вікно діалогу.
@@ -105,16 +110,16 @@ void printMsg(int _window, string _text = "", int _w2 = -1, int _w3 = -1, int _w
   switch (_window) {
   case 0: 
       cout << string(32, '=') << " Pool Schedule Accounting Application " << string(32, '=') << endl;
-      printMsg(17, "a");  printMsg(18, "Print the generalized schedule across all the tracks, trainers and groups."); 
+      printMsg(17, "a");  printMsg(18, "Print the generalized schedule across all the tracks, instructors and groups."); 
       printMsg(17, "b");  printMsg(18, "Print the schedule for the particular track or group."); 
-      printMsg(17, "c");  printMsg(18, "Find and print the schedule for the particular trainer or student."); 
+      printMsg(17, "c");  printMsg(18, "Find and print the schedule for the particular instructor or student."); 
       printMsg(17, "d");  printMsg(18, "Modify/create groups. Add/remove students to/from the group."); 
       break;
 
   case 1: cout << string(50, '=') << endl; printSchedule(1,0,0,0); break;
   case 2: cout << string(50, '=') << endl; printSchedule(0,1,1,0); break;
   case 3: cout << string(50, '=') << endl; printSchedule(0,0,0,1); break;
-  case 4: cout << string(50, '=') << endl; groupAndStudentsManagement(); break;
+  case 4: cout << string(50, '=') << endl; groupsAndStudentsManagement(); break;
   case 17: cout << string(100, '-') << endl << setw(2) << left << "|" << setw(4) << _text ;; break;
   case 18: cout << setw(2) << left << "|" << setw(90) << _text << setw(2) << right << "|" << endl; break;
   case 19: cout << "\nYou have pressed the key \"" << _text <<"\". There is no such option in this menu. Please try again.\n\n"; break;
@@ -130,6 +135,18 @@ int main() {
   std::atexit(save_file);
   SetConsoleOutputCP(1251);
   SetConsoleCP(1251);
+
+  Instructor instructor1("Krutiy", "+38(063)8651819", 300.0);
+	Instructor instructor2("Stetsyk", "+38(096)5631589", 300.0);
+	Instructor instructor3("Yakhno", "+38(095)7834967", 350.0);
+	Instructor instructor4("Dovzhanskyi", "+38(067)6145363", 300.0);
+	Instructor instructor5("Shira", "+38(063)3255133", 350.0);
+	Instructor instructor6("Kolchak", "+38(067)1345840", 300.0);
+	Instructor instructor7("Panchyshyn", "+38(067)7462681", 300.0);
+	Instructor instructor8("Hrynenko", "+38(050)5560642", 300.0);
+	Instructor instructor9("Kinash", "+38(099)4884404", 400.0);
+
+  // Lesson lesson1("20:15", 1, "Thursday");
 
   char qt; 
   bool run = true, inOption = false;
@@ -157,7 +174,7 @@ int main() {
           if (inOption) printMsg(19, string(1, qt), 20); 
           else { printMsg(2, "", 20); inOption = true; }
           break; 
-        // decimal 99 - "c" as char (ASCII) | Print the schedule for the particular trainer or student.
+        // decimal 99 - "c" as char (ASCII) | Print the schedule for the particular instructor or student.
         case(99): 
           if (inOption) printMsg(19, string(1, qt), 20); 
           else { printMsg(3, "", 20); inOption = true; }
