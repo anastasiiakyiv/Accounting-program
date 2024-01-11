@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <string>
 #include "Lesson.h"
 
 class Instructor
@@ -12,8 +13,14 @@ class Instructor
     std::vector<std::shared_ptr<Lesson>> schedule;
 
 public:
+  
+
     Instructor(const std::string& last, const std::string& phone, double rate)
-        : lastName(last), phoneNumber(phone), hourlyRate(rate) {}
+        : lastName(last), phoneNumber(phone), hourlyRate(rate) {
+         SetConsoleOutputCP(1251);
+         SetConsoleCP(1251);
+
+        }
 
     std::string getLastName() const 
     {

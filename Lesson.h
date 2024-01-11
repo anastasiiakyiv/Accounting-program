@@ -9,8 +9,8 @@ class Lesson
     int groupNumber;
 
 public:
-    Lesson(const std::string& lessonTime, int track, const std::string& day, const int groupNumber)
-        : time(lessonTime), laneNumber(track), dayOfWeek(day), Group(groupNumber) {}
+    Lesson(const std::string& lessonTime, int laneNumber, const std::string& day, const int groupNumber)
+        : time(lessonTime), laneNumber(laneNumber), dayOfWeek(day), groupNumber(groupNumber) {}
 
     std::string getTime() const 
     {
@@ -19,7 +19,7 @@ public:
 
     int getLaneNumber() const 
     {
-        return LaneNumber;
+        return laneNumber;
     }
 
     std::string getDayOfWeek() const 
