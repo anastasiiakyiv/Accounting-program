@@ -21,8 +21,12 @@ public:
     return students;
   }
 
-  void addStudentToGroup(std::unique_ptr<Student> student) {
-    students.push_back(std::move(student));
+  void addStudentToGroup(std::shared_ptr<Student> student) {
+    // std::cout << "GROUP | addStudentToGroup | student.get()->getLastName() = " << student.get()->getLastName() << std::endl;
+    students.push_back(student);
+    // for (auto _student : students) {
+    // //    std::cout << "GROUP | addStudentToGroup | INLOOP | student.get()->getLastName() = " << _student.get()->getLastName() << std::endl;
+    // }
   }
 
   int removeStudentFromGroup(std::shared_ptr<Student> student)

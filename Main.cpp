@@ -48,37 +48,38 @@ using namespace std;
 #define PURPLE  "\033[35m"
 #define RED     "\033[31m"
 
-string textToSave;
-stringstream buffer;
-std::vector<std::unique_ptr<Lane>> allLanes;
-std::vector<std::unique_ptr<Group>> allGroups;
-std::vector<std::unique_ptr<Instructor>> allInstructors;
+std::string textToSave;
+std::stringstream buffer;
+std::vector<std::shared_ptr<Lane>> allLanes;
+std::vector<std::shared_ptr<Group>> allGroups;
+std::vector<std::shared_ptr<Instructor>> allInstructors;
 
-// Tool Function 1 | Save the console output, even the program closed or stopped abruptly.
-void save_file() {
-  ofstream myfile;                    // Create the file object.
-
+// Tool Function 1 | 
+string timestamp(bool format) {
   // This block of code is used to get the current system timestamp into "timestamp".
   struct tm time;
   __time32_t aclock;
   char timestamp[32];
   _time32( &aclock );                 // Get time in seconds.
   _localtime32_s( &time, &aclock );   // Convert time to struct tm form.
-
-  // This line makes the timestamp in the format "2024_11_01__17_11_07".
+  // The next line makes the timestamp in the format "18 Sep 2023 15:14:32".
+  if (format) { strftime(timestamp, sizeof(timestamp), " %d %b %Y %H:%M:%S | ", &time); return string(timestamp); }
+  // The next line makes the timestamp in the format "2024_11_01__17_11_07".
   strftime(timestamp, sizeof(timestamp), "%Y_%d_%m__%H_%M_%S", &time);
-  myfile.open("schedule_search_history."+string(timestamp)+".txt");
+  return string(timestamp);
+}
 
-  // This line makes the timestamp in the format "18 Sep 2023 15:14:32".
-  strftime(timestamp, sizeof(timestamp), " %d %b %Y %H:%M:%S", &time);
-  myfile << string(8, '/') << timestamp << " | Pool schedule search history " << string(8, '\\') << endl;
-
+// Tool Function 2 | Save the console output, even the program closed or stopped abruptly.
+void save_file() {
+  ofstream myfile;                                            // Create the file object.
+  myfile.open("schedule_search_history."+timestamp(0)+".txt");
+  myfile << string(8, '/') << timestamp(1) << "Pool schedule search history " << string(8, '\\') << endl;
   myfile << textToSave;
   myfile.close();
 }
 
-// Tool Function 2
-void printMsg(int _window, string _text = "", int _w2 = -1, int _w3 = -1, int _w4 = -1) {  // Функція, яка друкує конкретне вікно діалогу.
+// Tool Function 3 | Prints (or writes right into file) specific message based on the passed "_window".
+void printMsg(int _window, string _text = "", int _w2 = -1) {  // 
   SetConsoleOutputCP(1251);
   SetConsoleCP(1251);
 
@@ -95,20 +96,36 @@ void printMsg(int _window, string _text = "", int _w2 = -1, int _w3 = -1, int _w
     printMsg(17, "2");  printMsg(18, "Add the student and assign it to the group."); 
     printMsg(17, "3");  printMsg(18, "Remove the student from the group."); break;
   // case 7: printMsg(17, "3");  printMsg(18, "."); 
-  case 15: buffer << endl << string(30, '=') << setw(50) << left << _text << string(30, '=') << endl; textToSave.append(buffer.str()); break;
+  case 13: 
+    break;
+  case 14: 
+    buffer << endl << string(110, '-') << endl << timestamp(1) << "A problem occured in the program :\n" << _text << endl << string(110, '-'); 
+    textToSave.append(buffer.str()); buffer.str(""); break;
+  case 15: 
+    buffer << endl << timestamp(1) << string(6, '=') << setw(50) << left << _text << string(30, '=') << endl << string(110, '-') << endl; 
+    textToSave.append(buffer.str()); buffer.str("");
+    buffer << endl << string(30, '=') << setw(50) << left << _text << string(30, '=') << endl << string(110, '-') << endl; break;
   case 16: cout << string(30, '=') << setw(40) << left << _text << string(30, '=') << endl; break;
-  case 17: cout << string(100, '-') << endl << setw(2) << left << "|" << setw(4) << _text ;; break;
+  case 17: cout << string(100, '-') << endl << setw(2) << left << "|" << setw(4) << _text; break;
   case 18: cout << setw(2) << left << "|" << setw(90) << _text << setw(2) << right << "|" << endl; break;
   case 19: cout << "\nYou have pressed the key \"" << _text <<"\". There is no such option in this menu. Please try again.\n\n"; break;
   case 20: 
     printMsg(17, "TAB"); printMsg(18, "Back to the previous menu."); 
     printMsg(17, "ESC"); printMsg(18, "Exit the program."); cout << string(100, '-'); break;
   default: break;
-  }
-  if (_w2 != -1) printMsg(_w2); if (_w3 != -1) printMsg(_w3); if (_w4 != -1) printMsg(_w4);
+  } if (_w2 != -1) printMsg(_w2);
 }
 
-// Tool Function 3
+template <typename T0, typename T1, typename T2, typename T3, typename T4>
+void print_row(std::stringstream& os, T0 const& t0, T1 const& t1, T2 const& t2,
+              T3 const& t3, T4 const& t4)
+{
+  os << std::setw(4) << t0 << std::setw(10) << t1 << std::setw(10) << t2
+    << std::setw(6) << t3 << std::setw(7) << std::fixed << std::setprecision(2)
+    << t4 << '\n';
+}
+
+// Tool Function 4
 void printSchedule(bool generalized, bool particularTrack, bool particularGroup, bool particularPerson) {
   system("CLS");
 
@@ -125,12 +142,31 @@ void printSchedule(bool generalized, bool particularTrack, bool particularGroup,
   buffer.str("");
 }
 
-// Tool Function 4 | If "tui" (terminal-user-interface) is false, then only add/remove the student and end.
-// void manageGroups(bool _tui, unique_ptr<Student> _student=nullptr, unique_ptr<Group> _group=nullptr, bool add=true) {
-void manageGroups(bool _tui, unique_ptr<Student> _student=nullptr, bool add=true) {
-
+// Tool Function 5 | If "tui" (terminal-user-interface) is false, then add/remove the student non-interactively.
+void manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=true, bool _random=true, int _groupNum=0) {
   if (!_tui) {
-    // Here would be code on how to add the student to the group right away, without dialog, that's when the "bool = _tui = true"
+    if (!_student) { 
+      printMsg(14, "The \"_student\" object was passed with \"nullptr\" value to the \"" + string(__func__) + "\" function."); return;
+    }
+
+    bool assigned = false;
+    for (auto group : allGroups) {
+      if (group.get()->getAllStudents().size() == 10) continue;
+      else if (!_random) {
+        if (group.get()->getNumber() == _groupNum) { group.get()->addStudentToGroup(_student); assigned = true; break; } 
+        else continue;
+      } group.get()->addStudentToGroup(_student); assigned = true; break;
+    }
+    if (!assigned) 
+      _random ? printMsg(14, "Unfortunately, all the groups are full.") : printMsg(14, "Unfortunately, the group \""+to_string(_groupNum) + "\"is full");
+
+    // For Debugging.
+    // for (auto group : allGroups) {
+    //   // std::cout << "MANAGE GRPS | INLOOP2 | group.get()->getNumber() = " << group.get()->getNumber() << std::endl;
+    //   for (auto _student : group.get()->getAllStudents()) {
+    //     // std::cout << "MANAGE GRPS | INLOOP2 | _student.get()->getLastName() = " << _student.get()->getLastName() << std::endl;
+    //   }
+    // }
     return;
   }
 
@@ -142,8 +178,6 @@ void manageGroups(bool _tui, unique_ptr<Student> _student=nullptr, bool add=true
     if (_kbhit()) {
       system("CLS");
       qt = _getch();
-      // cout << "\nGRP MANAGE | strin(1, qt) = " << string(1, qt) << endl;
-      // cout << "\nGRP MANAGE | qt = " << qt << endl;
       switch (qt) {
         case(9):                       // decimal 9 - "TAB" as char (ASCII) | Go back to the previous menu.
           if (inOption) { inOption=false; printMsg(4, "", 20); } 
@@ -153,9 +187,17 @@ void manageGroups(bool _tui, unique_ptr<Student> _student=nullptr, bool add=true
         case(49):                      // decimal 49 - "1" as char (ASCII) | Print all students,all groups.
           if (inOption) printMsg(19, string(1, qt), 20); 
           else {  
-            // buffer << string(8, '=') << "Printing all students from all the groups" << string(8, '=') << endl;
             printMsg(15, " Printing all students from all the groups ");
-            // textToSave.append(buffer.str());
+            buffer.str("");
+
+            print_row(buffer, "id", "name"   , "surname"  , "group", "score");
+            print_row(buffer, 1   , "Lucy"   , "Ballmer"  , 1     , 94.13);
+            print_row(buffer, 2   , "Roger"  , "Bacon"    , 2     , 77.13);
+            print_row(buffer, 3   , "Anna"   , "Smith"    , 1     , 87.13);
+            print_row(buffer, 4   , "Robert" , "Schwartz" , 1     , 98.34);
+            print_row(buffer, 5   , "Robert" , "Brown"    , 3     , 84.34);
+
+            textToSave.append(buffer.str());
             cout << buffer.str();
             buffer.str("");
             inOption = true; 
@@ -175,77 +217,51 @@ int main() {
   std::atexit(save_file);
   SetConsoleOutputCP(1251);
   SetConsoleCP(1251);
-
-  // Create "Lane" objects.
-  unique_ptr<Lane> lane1_ptr(new Lane(1));
-  unique_ptr<Lane> lane2_ptr(new Lane(2));
-  unique_ptr<Lane> lane3_ptr(new Lane(3));
-  allLanes.push_back(std::move(lane1_ptr));
-  allLanes.push_back(std::move(lane2_ptr));
-  allLanes.push_back(std::move(lane3_ptr));
-
-  // Create "Instructor" objects.
-  unique_ptr<Instructor> instructor1_ptr(new Instructor("Krutiy", "+38(063)8651819", 300.0));
-  unique_ptr<Instructor> instructor2_ptr(new Instructor("Stetsyk", "+38(096)5631589", 300.0));
-  unique_ptr<Instructor> instructor3_ptr(new Instructor("Yakhno", "+38(095)7834967", 350.0));
-  unique_ptr<Instructor> instructor4_ptr(new Instructor("Yakhno", "+38(095)7834967", 350.0));
-  unique_ptr<Instructor> instructor5_ptr(new Instructor("Dovzhanskyi", "+38(067)6145363", 300.0));
-  unique_ptr<Instructor> instructor6_ptr(new Instructor("Shira", "+38(063)3255133", 350.0));
-  unique_ptr<Instructor> instructor7_ptr(new Instructor("Kolchak", "+38(067)1345840", 300.0));
-  unique_ptr<Instructor> instructor8_ptr(new Instructor("Panchyshyn", "+38(067)7462681", 300.0));
-  unique_ptr<Instructor> instructor9_ptr(new Instructor("Hrynenko", "+38(050)5560642", 300.0));
-  unique_ptr<Instructor> instructor10_ptr(new Instructor("Kinash", "+38(099)4884404", 400.0));
-  allInstructors.push_back(std::move(instructor1_ptr));
-  allInstructors.push_back(std::move(instructor2_ptr));
-  allInstructors.push_back(std::move(instructor3_ptr));
-  allInstructors.push_back(std::move(instructor4_ptr));
-  allInstructors.push_back(std::move(instructor5_ptr));
-  allInstructors.push_back(std::move(instructor6_ptr));
-  allInstructors.push_back(std::move(instructor7_ptr));
-  allInstructors.push_back(std::move(instructor8_ptr));
-  allInstructors.push_back(std::move(instructor9_ptr));
-  allInstructors.push_back(std::move(instructor10_ptr));
   
-  // Create "Group" objects.
-  // unique_ptr<Group> group1_ptr(new Group(1));
-  // auto group1_ptr = make_unique<Group>(1);
-  // unique_ptr<Group> group2_ptr(new Group(2));
-  // unique_ptr<Group> group3_ptr(new Group(3));
-  // allGroups.push_back(std::move(group1_ptr));
-  // allGroups.push_back(std::move(group2_ptr));
-  // allGroups.push_back(std::move(group3_ptr));
+  // Generating the 3 "Lane" objects and 4 "Group" objects.
+  for (int i=1; i<=3; i++) {  
+    allLanes.push_back(std::make_shared<Lane>(i));                      // Create "Lane" objects.
+    allGroups.push_back(std::make_shared<Group>(i));                    // Create "Group" objects.
+  } allGroups.push_back(std::make_shared<Group>(4));
 
-  // Create "Student" objects.
-                                              //  lastN, parentN, phoneN,     paidLessons
-  // unique_ptr<Student> student1_ptr(new Student("Tichenko","Sharl","+38(730)7621483", 4));
-  // auto orderBucket = make_unique<ShopOrder>();
-  // auto student1_ptr = make_unique<Student>("Tichenko","Sharl","+38(730)7621483", 4);
-  // shared_ptr<Student> student2_ptr(new Student("Chujkevych","Ustym","+380(884)8890726", 10));
-  // shared_ptr<Student> student3_ptr(new Student("Pidoplichko","Emil","+380(248)8717477", 9));
-  // shared_ptr<Student> student4_ptr(new Student("Ovrah","Jonas","+380(668)4952298", 8));
-  // shared_ptr<Student> student5_ptr(new Student("Hrynishak","Fedir","+380(404)2303088", 3));
-  // shared_ptr<Student> student6_ptr(new Student("Turkevych","Avrelii","+380(118)7284874", 4));
-  // shared_ptr<Student> student7_ptr(new Student("Kompanec","Lyubodar ","+380(783)5566764", 2));
+  // Generating the 8 "Instructor" objects.
+  unique_ptr<string>::pointer tmp1 = new string[5]{"Krutiy","Stetsyk","Yakhno","Dovzhanskyi","Shira"};
+  unique_ptr<string>::pointer tmp2 = new string[5]{"+38(063)8651819","+38(096)5631589","+38(095)7834967","+38(067)6145363","+38(063)3255133"}, tmp3;
+  unique_ptr<double>::pointer tmp4 = new double[5]{300.0,300.0,350.0,300.0,350.0}; unique_ptr<int>::pointer tmp5;
+  for (int i=0; i<=4; i++) allInstructors.push_back(std::make_shared<Instructor>(tmp1[i], tmp2[i], tmp4[i]));
+  allInstructors.push_back(std::make_shared<Instructor>("Kolchak", "+38(067)1345840", 300.0));
+  allInstructors.push_back(std::make_shared<Instructor>("Panchyshyn", "+38(067)7462681", 300.0));
+  allInstructors.push_back(std::make_shared<Instructor>("Kinash", "+38(099)4884404", 400.0));
 
-  // cout << "MAIN | student1_ptr.get()->getLastName()" << student1_ptr.get()->getLastName() << endl;
-  // cout << "student2_ptr.get()->getLastName()" << student2_ptr.get()->getLastName() << endl;
-  
+  // Generating the 5 "Student" objects. Assigning them all to the "Group" with the "number" field = 3.
+  tmp1 = new string[5]{"Tichenko","Chujkevych","Pidoplichko","Ovrah","Hrynishak"}, tmp3 = new string[5]{"Sharl","Ustym","Emil","Jonas","Fedir"};
+  tmp2 = new string[5]{"+38(730)7621483","+380(884)8890726","+380(248)8717477","+380(668)4952298","+380(404)2303088"}; tmp5 = new int[5]{4,10,9,8,3};
+  for (int i=0; i<=4; i++) manageGroups(0, std::make_shared<Student>(tmp1[i],tmp3[i],tmp2[i], tmp5[i]),1,0,3);
 
-  // manageGroups(0, std::move(student1_ptr), std::move(group1_ptr), 1);
-  // manageGroups(0, std::move(student1_ptr), 1);
-  // manageGroups(0, student2_ptr, group1_ptr, 1);
-  // manageGroups(0, student3_ptr, group1_ptr, 1);
-  // manageGroups(0, student4_ptr, group1_ptr, 1);
-  // manageGroups(0, student5_ptr, group1_ptr, 1);
-  // manageGroups(1, student2_ptr, group1_ptr, 1);
-  // manageGroups(1, student3_ptr, group1_ptr, 1);
-  // manageGroups(1, student4_ptr, group1_ptr, 1);
-  // allGroups[1].get()->addStudentToGroup(student1_ptr);
+  // For ref: void manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=true, bool _random=true, int _groupNum=0)
+
+  // Generating another 5 "Student" objects. Assigning them to the groups, randomly.
+  tmp1 = new string[5]{"Arseniuk","Pastukh","Nechytailo","Polozhii","Holovinskyi"}, tmp3 = new string[5]{"Nihoslav","Pershyk","Chestyslav","Velet","Klym"};
+  tmp2 = new string[5]{"+38(542)2578432","+38(472)7682276","+38(827)3367671","+38(352)3966987","+38(797)4122186"}; tmp5 = new int[5]{7,6,6,5,7};
+  for (int i=0; i<=4; i++) manageGroups(0, std::make_shared<Student>(tmp1[i],tmp3[i],tmp2[i], tmp5[i]),1,1);
+
+  manageGroups(0, std::make_shared<Student>("Turkevych","Avrelii","+380(118)7284874", 4),1,0,1);
+  manageGroups(0, std::make_shared<Student>("Kompanec","Lyubodar ","+380(783)5566764", 2),1,0,1);
+
+  manageGroups(0, nullptr,1,0,1); // Generating the "Student" object as "nullptr" and passing it to this same function.
+
+  // For debugging:
+  // for (auto group : allGroups) {
+  //     std::cout << "MAIN | INLOOP1 | group.get()->getNumber() = " << group.get()->getNumber() << std::endl;
+  //     for (auto _student : group.get()->getAllStudents()) {
+  //       std::cout << "MAIN | INLOOP1 | _student.get()->getLastName() = " << _student.get()->getLastName() << std::endl;
+  //   }
+  // }
 
   char qt; 
   bool run = true, inOption = false;
 
-  //system("CLS");
+  // system("CLS");
   printMsg(0, "", 20); 
   while (run) {
     if (_kbhit()) {
