@@ -35,11 +35,10 @@
 #include <string>
 #include <iomanip>
 #include <sstream>
+#include <thread>
 
 // Specific libs
-#include "Lane.h"
-#include "Instructor.h"
-#include "Group.h"
+#include "Lesson.h"
 
 using namespace std;
 
@@ -53,6 +52,7 @@ std::stringstream buffer;
 std::vector<std::shared_ptr<Lane>> allLanes;
 std::vector<std::shared_ptr<Group>> allGroups;
 std::vector<std::shared_ptr<Instructor>> allInstructors;
+WeeklySchedule weeklySchedule; // Creating a schedule
 
 // Tool Function 1 | 
 string timestamp(bool format) {
@@ -79,7 +79,7 @@ void save_file() {
 }
 
 // Tool Function 3 | Prints (or writes right into file) specific message based on the passed "_window".
-void printMsg(int _window, string _text = "", int _w2 = -1) {  // 
+void printMsg(int _window, string _text = "", int _w2 = -1, string _text2 = "") {  // 
   SetConsoleOutputCP(1251);
   SetConsoleCP(1251);
 
@@ -92,14 +92,15 @@ void printMsg(int _window, string _text = "", int _w2 = -1) {  //
     printMsg(17, "d");  printMsg(18, "Create/modify group. Add/remove student to/from the group."); break;
   case 4: 
     printMsg(16, " Groups and students management ");
-    printMsg(17, "1");  printMsg(18, "Print list of all the students and groups."); 
-    printMsg(17, "2");  printMsg(18, "Add the student and assign it to the group."); 
-    printMsg(17, "3");  printMsg(18, "Remove the student from the group."); break;
+    printMsg(17, "1");  printMsg(18, "Print the table with information about all the students and groups."); 
+    printMsg(17, "2");  printMsg(18, "Add the new student and assign it to the group."); 
+    printMsg(17, "3");  printMsg(18, "Modify the information about the particular student."); 
+    printMsg(17, "4");  printMsg(18, "Remove the student from the group."); break;
   // case 7: printMsg(17, "3");  printMsg(18, "."); 
-  case 12: 
-    textToSave.append(buffer.str()); cout << buffer.str(); buffer.str(""); break;
-  case 13: 
-    cout << buffer.str(); buffer.str(""); break;
+  
+  case 11: cout << _text << " : " << _text2 << endl; break;
+  case 12: textToSave.append(buffer.str()); cout << buffer.str(); buffer.str(""); break;
+  case 13: cout << buffer.str(); buffer.str(""); break;
   case 14: 
     buffer << endl << string(110, '-') << endl << timestamp(1) << "A problem occured in the program :\n" << _text << endl << string(110, '-'); 
     textToSave.append(buffer.str()); buffer.str(""); break;
@@ -108,16 +109,31 @@ void printMsg(int _window, string _text = "", int _w2 = -1) {  //
     textToSave.append(buffer.str()); buffer.str("");
     buffer << endl << string(30, '=') << setw(50) << left << _text << string(30, '=') << endl << string(110, '-') << endl; break;
   case 16: cout << string(30, '=') << setw(40) << left << _text << string(30, '=') << endl; break;
-  case 17: cout << string(100, '-') << endl << setw(2) << left << "|" << setw(4) << _text; break;
-  case 18: cout << setw(2) << left << "|" << setw(90) << _text << setw(2) << right << "|" << endl; break;
+  case 17: cout << string(100, '-') << endl << setw(2) << left << "|" << setw(10) << _text; break;
+  case 18: cout << setw(2) << left << "|" << setw(84) << _text << setw(2) << right << "|" << endl; break;
   case 19: cout << "\nYou have pressed the key \"" << _text <<"\". There is no such option in this menu. Please try again.\n\n"; break;
   case 20: 
     printMsg(17, "TAB"); printMsg(18, "Back to the previous menu."); 
+    printMsg(17, "ESC"); printMsg(18, "Exit the program."); cout << string(100, '-'); break;
+  case 21: 
+    printMsg(17, "TAB"); printMsg(18, "Back to the previous menu."); 
+    printMsg(17, "BACKSPACE"); printMsg(18, "Remove the last character."); 
     printMsg(17, "ESC"); printMsg(18, "Exit the program."); cout << string(100, '-'); break;
   default: break;
   } if (_w2 != -1) printMsg(_w2);
 }
 
+// Tool Function 4 | Used to print the schedule.
+using PrintScheduleFunction = void (*)(const WeeklySchedule&); // Using a function pointer
+// This printWeeklySchedule function uses the printSchedule function to output the weekly schedule
+void printWeeklySchedule(const WeeklySchedule& schedule) 
+{
+  printSchedule(buffer, schedule, timestamp(1));
+  printMsg(12);
+}
+PrintScheduleFunction printScheduleFunction = printWeeklySchedule;
+
+// Tool Function 5 | Used by "ManageGroups" to print list of students per each group.
 template <typename T0, typename T1, typename T2, typename T3, typename T4>
 void print_row(std::stringstream& os, T0 const& t0, T1 const& t1, T2 const& t2, T3 const& t3, T4 const& t4, bool last)
 {
@@ -133,21 +149,7 @@ void print_row(std::stringstream& os, T0 const& t0, T1 const& t1, T2 const& t2, 
     << "|" << std::setw(9) << " " << std::setw(13) << t4 << setw(2) << right << "|" << "\n";
 }
 
-// Tool Function 4
-void printSchedule(bool generalized, bool particularTrack, bool particularGroup, bool particularPerson) {
-  system("CLS");
-
-  if (generalized) printMsg(15, " Printing the generalized schedule. ");
-  
-  if (particularTrack) printMsg(15, " Printing the schedule for the particular track. ");
-
-  if (particularGroup) printMsg(15, " Printing the schedule for the particular group. ");
-
-  if (particularPerson) printMsg(15, " Printing the schedule for the particular person. ");
-  printMsg(13);
-}
-
-// Tool Function 5 | If "tui" (terminal-user-interface) is false, then add/remove the student non-interactively.
+// Tool Function 6 | If "tui" (terminal-user-interface) is false, then add/remove the student non-interactively.
 void manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=true, bool _random=true, int _groupNum=0) {
   if (!_tui) {
     if (!_student) { 
@@ -209,15 +211,16 @@ void manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=tru
             // .---------------------|--------------------|--------------------|---------------------|-----------------------.
             // |         1           |      Pastukh       |     Pershyk        |   +38(472)7682276   |         6             |
 
-            printMsg(12);
-            inOption = true; 
+            printMsg(12); inOption = true; 
           } break; 
 
         case(50):                      // decimal 50 - "2" as char (ASCII) | Print all students,all groups.
           if (inOption) printMsg(19, string(1, qt), 20); 
           else {
             printMsg(15, " Enter the details for the new student: ", 13);
-            inOption = true;
+
+          
+          inOption = true;
           } break;
         
         default: 
@@ -264,8 +267,49 @@ int main() {
 
   manageGroups(0, std::make_shared<Student>("Turkevych","Avrelii","+380(118)7284874", 4),1,0,1);
   manageGroups(0, std::make_shared<Student>("Kompanec","Lyubodar ","+380(783)5566764", 2),1,0,1);
-
   manageGroups(0, nullptr,1,0,1); // Generating the "Student" object as "nullptr" and passing it to this same function.
+
+
+  weeklySchedule.days.push_back({ "Monday", {
+      {"09:00-09:45", allLanes[0], allInstructors[2], allGroups[0]},
+      {"10:15-11:00", allLanes[0], allInstructors[2], allGroups[0]},
+      {"10:15-11:00", allLanes[1], allInstructors[3], allGroups[2]},
+      {"11:30-12:15", allLanes[0], allInstructors[2], allGroups[3]},
+      {"11:30-12:15", allLanes[1], allInstructors[3], allGroups[2]},
+  } });
+
+  weeklySchedule.days.push_back({ "Tuesday", {
+        {"16:30-17:15", allLanes[2], allInstructors[0], allGroups[1]},
+        {"17:45-18:30", allLanes[2], allInstructors[0], allGroups[1]},
+    } });
+
+  weeklySchedule.days.push_back({ "Wednesday", {
+        {"10:15-11:00", allLanes[0], allInstructors[6], allGroups[0]},
+        {"10:15-11:00", allLanes[1], allInstructors[5], allGroups[3]},
+        {"11:30-12:15", allLanes[0], allInstructors[6], allGroups[0]},
+        {"11:30-12:15", allLanes[1], allInstructors[5], allGroups[3]},
+        {"15:15-16:00", allLanes[2], allInstructors[1], allGroups[2]},
+    } });
+
+  weeklySchedule.days.push_back({ "Thursday", {
+        {"16:30-17:15", allLanes[2], allInstructors[0], allGroups[1]},
+        {"17:45-18:30", allLanes[2], allInstructors[0], allGroups[1]},
+    } });
+
+  weeklySchedule.days.push_back({ "Friday", {
+        {"09:00-09:45", allLanes[0], allInstructors[1], allGroups[2]},
+        {"10:15-11:00", allLanes[2], allInstructors[7], allGroups[3]},
+        {"10:15-11:00", allLanes[0], allInstructors[1], allGroups[2]},
+        {"11:30-12:15", allLanes[2], allInstructors[7], allGroups[3]},
+        {"12:45-13:30", allLanes[2], allInstructors[7], allGroups[0]},
+  } });
+
+  weeklySchedule.days.push_back({ "Saturday", {
+        {"11:30-12:15", allLanes[1], allInstructors[4], allGroups[1]},
+        {"12:45-13:30", allLanes[1], allInstructors[4], allGroups[1]},
+  } });
+
+  // printScheduleFunction(weeklySchedule);
 
   // // For debugging:
   // for (auto group : allGroups) {
@@ -289,13 +333,13 @@ int main() {
         case(27): return 0; break; // decimal 27 - "ESCAPE" as char (ASCII) | Exit Program.
         case(97):                  // decimal 97 - "a" as char (ASCII) | Print generalized schedule.
           if (inOption) printMsg(19, string(1, qt), 20); 
-          else { printSchedule(1,0,0,0); printMsg(20); inOption = true; } break; 
+          else { printScheduleFunction(weeklySchedule); printMsg(20); inOption = true; } break; 
         case(98): // decimal 98 - "b" as char (ASCII) | Print the schedule for the particular track or group. 
           if (inOption) printMsg(19, string(1, qt), 20); 
-          else { printSchedule(0,1,1,0); inOption = true; } break; 
+          else { printMsg(15, " Printing the schedule for the particular track or group. "); inOption = true; } break; 
         case(99): // decimal 99 - "c" as char (ASCII) | Print the schedule for the particular instructor or student.
           if (inOption) printMsg(19, string(1, qt), 20); 
-          else { printSchedule(0,0,0,1); inOption = true; } break; 
+          else { printMsg(15, " Printing the schedule for the particular person. "); inOption = true; } break; 
         case(100): // decimal 100 - "d" as char (ASCII) | Modify/create groups. Add/remove students to/from the group.
           if (inOption) printMsg(19, string(1, qt), 20); 
           else { manageGroups(1); printMsg(0, "", 20); }
@@ -306,5 +350,8 @@ int main() {
       }
     }
   } run = true;
+
   return 0;
+
+
 }

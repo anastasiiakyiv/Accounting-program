@@ -1,22 +1,13 @@
 #pragma once
-#include <vector>
-#include <memory>
-#include "Lesson.h"
-
 class Lane
 {
-    int number;
-    std::vector<std::shared_ptr<Lesson>> schedule;
+  int number;
 
-public:
-    Lane(int number) : number(number) { }
+  public:
+    Lane(int number) : number(number) {}
 
-    std::vector<std::shared_ptr<Lesson>> getSchedule() const 
+    int getLaneNumber() const
     {
-        return schedule;
-    }
-    void addLessonToSchedule(std::shared_ptr<Lesson> lesson)
-    {
-        schedule.push_back(lesson);
+        return number;
     }
 };
