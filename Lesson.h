@@ -1,3 +1,4 @@
+#pragma once
 #include "Group.h"
 #include "Lane.h"
 #include "Instructor.h"
