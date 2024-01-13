@@ -278,9 +278,44 @@ int main() {
 
   WeeklySchedule weeklySchedule; // Creating a schedule
 
-  weeklySchedule.days.push_back({ "Monday", {{"10:00-10:45", 1, "Instructor1", 1}, {"11:00-11:45", 1, "Instructor2", 1}} });
-  weeklySchedule.days.push_back({ "Wednesday", {{"10:00-10:45", 1, "Instructor2", 1}} });
-  weeklySchedule.days.push_back({ "Friday", {{"10:00-10:45", 1, "Instructor3", 1}} });
+  weeklySchedule.days.push_back({ "Monday", {
+      {"09:00-09:45", allLanes[0], allInstructors[2], allGroups[0]},
+      {"10:15-11:00", allLanes[0], allInstructors[2], allGroups[0]},
+      {"10:15-11:00", allLanes[1], allInstructors[3], allGroups[2]},
+      {"11:30-12:15", allLanes[0], allInstructors[2], allGroups[3]},
+      {"11:30-12:15", allLanes[1], allInstructors[3], allGroups[2]},
+  } });
+
+  weeklySchedule.days.push_back({ "Tuesday", {
+        {"16:30-17:15", allLanes[2], allInstructors[0], allGroups[1]},
+        {"17:45-18:30", allLanes[2], allInstructors[0], allGroups[1]},
+    } });
+
+  weeklySchedule.days.push_back({ "Wednesday", {
+        {"10:15-11:00", allLanes[0], allInstructors[6], allGroups[0]},
+        {"10:15-11:00", allLanes[1], allInstructors[5], allGroups[3]},
+        {"11:30-12:15", allLanes[0], allInstructors[6], allGroups[0]},
+        {"11:30-12:15", allLanes[1], allInstructors[5], allGroups[3]},
+        {"15:15-16:00", allLanes[2], allInstructors[1], allGroups[2]},
+    } });
+
+  weeklySchedule.days.push_back({ "Thursday", {
+        {"16:30-17:15", allLanes[2], allInstructors[0], allGroups[1]},
+        {"17:45-18:30", allLanes[2], allInstructors[0], allGroups[1]},
+    } });
+
+  weeklySchedule.days.push_back({ "Friday", {
+        {"09:00-09:45", allLanes[0], allInstructors[1], allGroups[2]},
+        {"10:15-11:00", allLanes[2], allInstructors[7], allGroups[3]},
+        {"10:15-11:00", allLanes[0], allInstructors[1], allGroups[2]},
+        {"11:30-12:15", allLanes[2], allInstructors[7], allGroups[3]},
+        {"12:45-13:30", allLanes[2], allInstructors[7], allGroups[0]},
+  } });
+
+  weeklySchedule.days.push_back({ "Saturday", {
+        {"11:30-12:15", allLanes[1], allInstructors[4], allGroups[1]},
+        {"12:45-13:30", allLanes[1], allInstructors[4], allGroups[1]},
+  } });
 
   // // For debugging:
   // for (auto group : allGroups) {
