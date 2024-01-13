@@ -78,6 +78,15 @@ void save_file() {
   myfile.close();
 }
 
+using PrintScheduleFunction = void (*)(const WeeklySchedule&); // Using a function pointer
+
+void printWeeklySchedule(const WeeklySchedule& schedule) // This printWeeklySchedule function uses the printSchedule function to output the weekly schedule
+{
+    printSchedule(schedule);
+}
+
+PrintScheduleFunction printScheduleFunction = printWeeklySchedule;
+
 // Tool Function 3 | Prints (or writes right into file) specific message based on the passed "_window".
 void printMsg(int _window, string _text = "", int _w2 = -1) {  // 
   SetConsoleOutputCP(1251);
@@ -294,8 +303,8 @@ int main() {
           if (inOption) printMsg(19, string(1, qt), 20); 
           else { printSchedule(0,1,1,0); inOption = true; } break; 
         case(99): // decimal 99 - "c" as char (ASCII) | Print the schedule for the particular instructor or student.
-          if (inOption) printMsg(19, string(1, qt), 20); 
-          else { printSchedule(0,0,0,1); inOption = true; } break; 
+          if (inOption) printMsg(19, string(1, qt), 20);
+          else { printSchedule(0, 0, 0, 1); inOption = true; } break; 
         case(100): // decimal 100 - "d" as char (ASCII) | Modify/create groups. Add/remove students to/from the group.
           if (inOption) printMsg(19, string(1, qt), 20); 
           else { manageGroups(1); printMsg(0, "", 20); }
