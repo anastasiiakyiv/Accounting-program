@@ -304,7 +304,9 @@ int main() {
         case(27): return 0; break; // decimal 27 - "ESCAPE" as char (ASCII) | Exit Program.
         case(97):                  // decimal 97 - "a" as char (ASCII) | Print generalized schedule.
           if (inOption) printMsg(19, string(1, qt), 20); 
-          else { printSchedule(1,0,0,0); printMsg(20); inOption = true; } break; 
+          else {
+          printScheduleFunction(weeklySchedule); // function call by pointer
+          printMsg(20); inOption = true; } break; 
         case(98): // decimal 98 - "b" as char (ASCII) | Print the schedule for the particular track or group. 
           if (inOption) printMsg(19, string(1, qt), 20); 
           else { printSchedule(0,1,1,0); inOption = true; } break; 
