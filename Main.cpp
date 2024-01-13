@@ -96,8 +96,10 @@ void printMsg(int _window, string _text = "", int _w2 = -1) {  //
     printMsg(17, "2");  printMsg(18, "Add the student and assign it to the group."); 
     printMsg(17, "3");  printMsg(18, "Remove the student from the group."); break;
   // case 7: printMsg(17, "3");  printMsg(18, "."); 
+  case 12: 
+    textToSave.append(buffer.str()); cout << buffer.str(); buffer.str(""); break;
   case 13: 
-    break;
+    cout << buffer.str(); buffer.str(""); break;
   case 14: 
     buffer << endl << string(110, '-') << endl << timestamp(1) << "A problem occured in the program :\n" << _text << endl << string(110, '-'); 
     textToSave.append(buffer.str()); buffer.str(""); break;
@@ -117,12 +119,18 @@ void printMsg(int _window, string _text = "", int _w2 = -1) {  //
 }
 
 template <typename T0, typename T1, typename T2, typename T3, typename T4>
-void print_row(std::stringstream& os, T0 const& t0, T1 const& t1, T2 const& t2,
-              T3 const& t3, T4 const& t4)
+void print_row(std::stringstream& os, T0 const& t0, T1 const& t1, T2 const& t2, T3 const& t3, T4 const& t4, bool last)
 {
-  os << std::setw(4) << t0 << std::setw(10) << t1 << std::setw(10) << t2
-    << std::setw(6) << t3 << std::setw(7) << std::fixed << std::setprecision(2)
-    << t4 << '\n';
+  if (last) {
+    os << "*" << string(21, '-') << "*" << string(20, '-') << "*" 
+    << string(20, '-') << "*" << string(21, '-') << "*" << string(23, '-') << "*" << endl; return; 
+  } os << "." << string(21, '-') << "|" << string(20, '-') << "|" << string(20, '-') << "|" 
+    << string(21, '-')     << "|" << string(23, '-') << "." << endl << setw(2) << left 
+    << "|" << std::setw(8) << " " << std::setw(12) << t0 
+    << "|" << std::setw(6) << " " << std::setw(14) << t1 
+    << "|" << std::setw(5) << " " << std::setw(15) << t2
+    << "|" << std::setw(3) << " " << std::setw(18) << t3 
+    << "|" << std::setw(9) << " " << std::setw(13) << t4 << setw(2) << right << "|" << "\n";
 }
 
 // Tool Function 4
@@ -136,10 +144,7 @@ void printSchedule(bool generalized, bool particularTrack, bool particularGroup,
   if (particularGroup) printMsg(15, " Printing the schedule for the particular group. ");
 
   if (particularPerson) printMsg(15, " Printing the schedule for the particular person. ");
-
-  textToSave.append(buffer.str());
-  cout << buffer.str();
-  buffer.str("");
+  printMsg(13);
 }
 
 // Tool Function 5 | If "tui" (terminal-user-interface) is false, then add/remove the student non-interactively.
@@ -160,11 +165,11 @@ void manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=tru
     if (!assigned) 
       _random ? printMsg(14, "Unfortunately, all the groups are full.") : printMsg(14, "Unfortunately, the group \""+to_string(_groupNum) + "\"is full");
 
-    // For Debugging.
+    // // For Debugging.
     // for (auto group : allGroups) {
-    //   // std::cout << "MANAGE GRPS | INLOOP2 | group.get()->getNumber() = " << group.get()->getNumber() << std::endl;
+    //   std::cout << "MANAGE GRPS | INLOOP2 | group.get()->getNumber() = " << group.get()->getNumber() << std::endl;
     //   for (auto _student : group.get()->getAllStudents()) {
-    //     // std::cout << "MANAGE GRPS | INLOOP2 | _student.get()->getLastName() = " << _student.get()->getLastName() << std::endl;
+    //     std::cout << "MANAGE GRPS | INLOOP2 | _student.get()->getLastName() = " << _student.get()->getLastName() << std::endl;
     //   }
     // }
     return;
@@ -187,21 +192,33 @@ void manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=tru
         case(49):                      // decimal 49 - "1" as char (ASCII) | Print all students,all groups.
           if (inOption) printMsg(19, string(1, qt), 20); 
           else {  
-            printMsg(15, " Printing all students from all the groups ");
-            buffer.str("");
+            printMsg(15, " Printing all students from all the groups "); buffer.str("");
+            print_row(buffer, "group id" ,"last name", "parent name", "phone number", "paid lessons", 0);
+            for (auto _group : allGroups) 
+            { auto _groupp = _group.get();
+              for (auto _student : _groupp->getAllStudents()) 
+              { auto _studentt = _student.get();
+                print_row(buffer, _groupp->getNumber(), _studentt->getLastName(), _studentt->getParentName(), 
+                _studentt->getPhoneNumber(), _studentt->getPaidLessons(), 0);
+              }
+            } print_row(buffer, 0, "", "", 0, 0, 1);
+            // .---------------------|--------------------|--------------------|---------------------|-----------------------.
+            // |         group id    |      last name     |     parent name    |   phone number      |         paid lessons  |
+            // .---------------------|--------------------|--------------------|---------------------|-----------------------.
+            // |         1           |      Arseniuk      |     Nihoslav       |   +38(542)2578432   |         7             |
+            // .---------------------|--------------------|--------------------|---------------------|-----------------------.
+            // |         1           |      Pastukh       |     Pershyk        |   +38(472)7682276   |         6             |
 
-            print_row(buffer, "id", "name"   , "surname"  , "group", "score");
-            print_row(buffer, 1   , "Lucy"   , "Ballmer"  , 1     , 94.13);
-            print_row(buffer, 2   , "Roger"  , "Bacon"    , 2     , 77.13);
-            print_row(buffer, 3   , "Anna"   , "Smith"    , 1     , 87.13);
-            print_row(buffer, 4   , "Robert" , "Schwartz" , 1     , 98.34);
-            print_row(buffer, 5   , "Robert" , "Brown"    , 3     , 84.34);
-
-            textToSave.append(buffer.str());
-            cout << buffer.str();
-            buffer.str("");
+            printMsg(12);
             inOption = true; 
           } break; 
+
+        case(50):                      // decimal 50 - "2" as char (ASCII) | Print all students,all groups.
+          if (inOption) printMsg(19, string(1, qt), 20); 
+          else {
+            printMsg(15, " Enter the details for the new student: ", 13);
+            inOption = true;
+          } break;
         
         default: 
           printMsg(19, string(1, qt), 20); 
@@ -250,7 +267,7 @@ int main() {
 
   manageGroups(0, nullptr,1,0,1); // Generating the "Student" object as "nullptr" and passing it to this same function.
 
-  // For debugging:
+  // // For debugging:
   // for (auto group : allGroups) {
   //     std::cout << "MAIN | INLOOP1 | group.get()->getNumber() = " << group.get()->getNumber() << std::endl;
   //     for (auto _student : group.get()->getAllStudents()) {
