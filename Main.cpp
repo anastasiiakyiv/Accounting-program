@@ -276,6 +276,12 @@ int main() {
 
   manageGroups(0, nullptr,1,0,1); // Generating the "Student" object as "nullptr" and passing it to this same function.
 
+  WeeklySchedule weeklySchedule; // Creating a schedule
+
+  weeklySchedule.days.push_back({ "Monday", {{"10:00-10:45", 1, "Instructor1", 1}, {"11:00-11:45", 1, "Instructor2", 1}} });
+  weeklySchedule.days.push_back({ "Wednesday", {{"10:00-10:45", 1, "Instructor2", 1}} });
+  weeklySchedule.days.push_back({ "Friday", {{"10:00-10:45", 1, "Instructor3", 1}} });
+
   // // For debugging:
   // for (auto group : allGroups) {
   //     std::cout << "MAIN | INLOOP1 | group.get()->getNumber() = " << group.get()->getNumber() << std::endl;
