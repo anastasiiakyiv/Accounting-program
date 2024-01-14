@@ -83,3 +83,42 @@ void printSchedule(std::ostream& os, const WeeklySchedule& schedule, std::string
         }
     }
 }
+
+void printScheduleForGroupOrLane(const WeeklySchedule& schedule, char option, int groupOrLaneNumber)
+{
+    std::string optionLabel;
+    if (option == 'g') {
+        optionLabel = "Group";
+    }
+    else if (option == 'l') {
+        optionLabel = "Lane";
+    }
+    else {
+        std::cerr << "Invalid option. Use 'g' for group or 'l' for lane.\n";
+        return;
+    }
+
+    std::cout << "\n==================== Weekly Schedule for " << optionLabel << " " << groupOrLaneNumber << " ====================\n";
+
+    for (const auto& day : schedule.days) {
+        for (const auto& lesson : day.lessons) {
+            if (option == 'g' && lesson.groupNumber->getNumber() == groupOrLaneNumber)
+            {
+                std::cout << "Day: " << day.day << "\n";
+                std::cout << "Time: " << lesson.time << "\n";
+                std::cout << "Lane number: " << lesson.lane->getLaneNumber() << "\n";
+                std::cout << "Instructor: " << lesson.instructorName->getLastName() << "\n\n";
+            }
+
+            else if (option == 'l' && lesson.lane->getLaneNumber() == groupOrLaneNumber)
+            {
+                std::cout << "Day: " << day.day << "\n";
+                std::cout << "Time: " << lesson.time << "\n";
+                std::cout << "Group number: " << lesson.groupNumber->getNumber() << "\n";
+                std::cout << "Instructor: " << lesson.instructorName->getLastName() << "\n\n";
+            }
+
+        }
+    }
+    std::cout << "================================================================\n";
+}
