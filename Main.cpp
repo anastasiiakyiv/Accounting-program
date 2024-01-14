@@ -384,9 +384,26 @@ int main() {
           else { printScheduleFunction(weeklySchedule); printMsg(20); inOption = true; } break; 
 
         case(98): // decimal 98 - "b" as char (ASCII) | Print the schedule for the particular track or group. 
-          if (inOption) printMsg(19, string(1, qt), 20); 
-          else { printMsg(15, " Printing the schedule for the particular track or group. ", 13); inOption = true; } break; 
-
+          if (inOption) printMsg(19, string(1, qt), 20);
+          else {
+              char groupOrLaneOption;
+              int groupOrLaneNumber;
+              std::cout << "Enter 'g' for group or 'l' for lane: ";
+              std::cin >> groupOrLaneOption;
+              if (groupOrLaneOption == 'g' || groupOrLaneOption == 'l') {
+              std::cout << "Enter " << (groupOrLaneOption == 'g' ? "group" : "lane") << " number: ";
+              std::cin >> groupOrLaneNumber;
+          }
+          else {
+              std::cerr << "Invalid option. Use 'g' for group or 'l' for lane.\n";
+              break;
+          }
+          printScheduleForGroupOrLane(weeklySchedule, groupOrLaneOption, groupOrLaneNumber);
+          printMsg(20);
+          inOption = true; 
+        } 
+        break;
+        
         case(99): // decimal 99 - "c" as char (ASCII) | Print the schedule for the particular instructor or student.
           if (inOption) printMsg(19, string(1, qt), 20); 
           else { printMsg(15, " Printing the schedule for the particular person. ", 13); inOption = true; } break; 
