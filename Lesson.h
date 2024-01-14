@@ -87,27 +87,33 @@ void printSchedule(std::ostream& os, const WeeklySchedule& schedule, std::string
 void printScheduleForGroupOrLane(const WeeklySchedule& schedule, char option, int groupOrLaneNumber)
 {
     std::string optionLabel;
+    std::string optionHeader;
     if (option == 'g') {
         optionLabel = "Group";
+        optionHeader = "Lane Number";
     }
     else if (option == 'l') {
         optionLabel = "Lane";
+        optionHeader = "Group Number";
     }
     else {
         std::cerr << "Invalid option. Use 'g' for group or 'l' for lane.\n";
         return;
     }
 
-    std::cout << "\n==================== Weekly Schedule for " << optionLabel << " " << groupOrLaneNumber << " ====================\n";
-
+    std::cout << "\n====================== Weekly Schedule for " << optionLabel << " " << groupOrLaneNumber << " ======================\n";
+    std::cout << "-------------------------------------------------------------------------\n";
+    std::cout << std::left << std::setw(16) << "Day" << std::setw(16) << "|Time" << std::setw(21) << "|" + optionHeader << std::setw(19) << "|Instructor" << "|";
+    std::cout << "\n-------------------------------------------------------------------------\n";
     for (const auto& day : schedule.days) {
         for (const auto& lesson : day.lessons) {
             if (option == 'g' && lesson.groupNumber->getNumber() == groupOrLaneNumber)
             {
-                std::cout << "Day: " << day.day << "\n";
-                std::cout << "Time: " << lesson.time << "\n";
-                std::cout << "Lane number: " << lesson.lane->getLaneNumber() << "\n";
-                std::cout << "Instructor: " << lesson.instructorName->getLastName() << "\n\n";
+                std::cout 
+                    << std::left << std::setw(16) << day.day
+                    << "|" << std::setw(15) << lesson.time
+                    << "|" << std::setw(20) << lesson.lane->getLaneNumber()
+                    << "|" << std::setw(18) << lesson.instructorName->getLastName() << "|" << "\n";
             }
 
             else if (option == 'l' && lesson.lane->getLaneNumber() == groupOrLaneNumber)
@@ -120,5 +126,5 @@ void printScheduleForGroupOrLane(const WeeklySchedule& schedule, char option, in
 
         }
     }
-    std::cout << "================================================================\n";
+    std::cout << "=========================================================================\n";
 }
