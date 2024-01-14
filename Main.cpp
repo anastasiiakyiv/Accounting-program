@@ -164,22 +164,11 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=tru
     return assigned;
   }
 
-<<<<<<< HEAD
   bool inOption2 = false, confirm = true; string text; char qt2 = ' ';
   auto validateField = [qt2](string& str, bool strIsPNum=false, bool strIsNum=false, bool strIsGroupId=false) mutable {
     if (!strIsPNum && !strIsNum && str.length() < 2) {cout << "This value cannot be empty or have less than 2 characters.\n\n"; return false;}
     if (strIsPNum && (str.length() < 12 || str.length() > 15) )
       {cout << "The phone number cannot be less than 11 characters, (including country code).\nIt cannot be more than 15 characters.\n\n"; return false;}
-=======
-
-  // string lastN, parentN, phoneNum, paidL;
-  bool inOption2 = false, confirm = true;
-  string text; char qt2 = ' ';
-  // cout << "MAIN | BEFORE LAMBDA0 \n";
-  auto validateString = [qt2](string& str, bool strIsPNum=false, bool strIsNum=false) mutable {
-    // if (str.empty()) {cout << "This value cannot be empty.\n\n"; return false;}
-    if (!strIsPNum && !strIsNum && str.length() < 2) {cout << "This value cannot be empty or have less than 2 characters.\n\n"; return false;}
->>>>>>> b51b3ed3b39622469d46b9a18eeb5a0a62bf22d1
     for (int i = 0; i < str.length(); i++) { qt2 = str[i]; 
       // 65-90 in ASCII means range of upper case letters, 97-122 - lower case letteres. 
       if ( ((qt2 <= 64) || (qt2 >= 91)) && ((qt2 <= 96) || (qt2 >= 123)) && !strIsPNum && !strIsNum ) 
