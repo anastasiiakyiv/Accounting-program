@@ -118,12 +118,12 @@ void printScheduleForGroupOrLane(const WeeklySchedule& schedule, char option, in
 
             else if (option == 'l' && lesson.lane->getLaneNumber() == groupOrLaneNumber)
             {
-                std::cout << "Day: " << day.day << "\n";
-                std::cout << "Time: " << lesson.time << "\n";
-                std::cout << "Group number: " << lesson.groupNumber->getNumber() << "\n";
-                std::cout << "Instructor: " << lesson.instructorName->getLastName() << "\n\n";
-            }
-
+                std::cout
+                    << std::left << std::setw(16) << day.day
+                    << "|" << std::setw(15) << lesson.time
+                    << "|" << std::setw(20) << lesson.groupNumber->getNumber()
+                    << "|" << std::setw(18) << lesson.instructorName->getLastName() << "|" << "\n";
+             }
         }
     }
     std::cout << "=========================================================================\n";
