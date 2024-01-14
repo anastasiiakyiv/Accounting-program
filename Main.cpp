@@ -186,7 +186,8 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=tru
   string text; char qt2 = ' ';
   // cout << "MAIN | BEFORE LAMBDA0 \n";
   auto validateString = [qt2](string& str, bool strIsPNum=false, bool strIsNum=false) mutable {
-    if (str.empty()) {cout << "This value cannot be empty.\n\n"; return false;}
+    // if (str.empty()) {cout << "This value cannot be empty.\n\n"; return false;}
+    if (!strIsPNum && !strIsNum && str.length() < 2) {cout << "This value cannot be empty or have less than 2 characters.\n\n"; return false;}
     for (int i = 0; i < str.length(); i++) { qt2 = str[i]; 
       // 65-90 in ASCII means range of upper case letters, 97-122 - lower case letteres. 
       if ( ((qt2 <= 64) || (qt2 >= 91)) && ((qt2 <= 96) || (qt2 >= 123)) && !strIsPNum && !strIsNum ) 

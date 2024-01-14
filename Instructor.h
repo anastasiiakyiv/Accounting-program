@@ -11,7 +11,7 @@ class Instructor
     double hourlyRate;
 
 public:
-
+  
     Instructor(const std::string& last, const std::string& phone, double rate)
         : lastName(last), phoneNumber(phone), hourlyRate(rate) {
 
