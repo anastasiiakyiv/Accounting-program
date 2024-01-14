@@ -56,16 +56,12 @@ WeeklySchedule weeklySchedule; // Creating a schedule
 
 // Tool Function 1 | Returns formatted string, which contains time/date from system. (Used by other functions)
 string timestamp(bool format) {
-  // This block of code is used to get the current system timestamp into "timestamp".
-  struct tm time;
-  __time32_t aclock;
-  char timestamp[32];
+  struct tm time; __time32_t aclock; char timestamp[32];
   _time32( &aclock );                 // Get time in seconds.
   _localtime32_s( &time, &aclock );   // Convert time to struct tm form.
   // The next line makes the timestamp in the format "18 Sep 2023 15:14:32".
   if (format) { strftime(timestamp, sizeof(timestamp), " %d %b %Y %H:%M:%S | ", &time); return string(timestamp); }
-  // The next line makes the timestamp in the format "2024_11_01__17_11_07".
-  strftime(timestamp, sizeof(timestamp), "%Y_%d_%m__%H_%M_%S", &time);
+  strftime(timestamp, sizeof(timestamp), "%Y_%d_%m__%H_%M_%S", &time); // This line formats timestamp into "2024_11_01__17_11_07".
   return string(timestamp);
 }
 
@@ -80,19 +76,16 @@ void save_file() {
 
 // Tool Function 3 | Prints (or writes right into file) specific message based on the passed "_window". (Used by other functions)
 void printMsg(int _window, string _text = "", int _w2 = -1, string _text2 = "") {  // 
-  SetConsoleOutputCP(1251);
-  SetConsoleCP(1251);
-
   switch (_window) {
   case 0: 
     printMsg(16, " Pool Schedule Accounting Application ");
-    printMsg(17, "a");  printMsg(18, "Print the generalized schedule across all the tracks, instructors and groups."); 
+    printMsg(17, "a");  printMsg(18, "Print the schedule for all the tracks, instructors and groups."); 
     printMsg(17, "b");  printMsg(18, "Print the schedule for the particular track or group."); 
-    printMsg(17, "c");  printMsg(18, "Find and print the schedule for the particular instructor or student."); 
+    printMsg(17, "c");  printMsg(18, "Print the schedule for the particular instructor or student."); 
     printMsg(17, "d");  printMsg(18, "Create/modify group. Add/remove student to/from the group."); break;
   case 4: 
     printMsg(16, " Groups and students management ");
-    printMsg(17, "1");  printMsg(18, "Print the table with information about all the students and groups."); 
+    printMsg(17, "1");  printMsg(18, "Print the table with information for all students and groups."); 
     printMsg(17, "2");  printMsg(18, "Add the new student and assign it to the group."); 
     printMsg(17, "3");  printMsg(18, "Modify the information about the particular student."); 
     printMsg(17, "4");  printMsg(18, "Remove the student from the group."); break;
@@ -102,25 +95,25 @@ void printMsg(int _window, string _text = "", int _w2 = -1, string _text2 = "") 
   case 12: textToSave.append(buffer.str()); cout << buffer.str(); buffer.str(""); break;
   case 13: cout << buffer.str(); buffer.str(""); break; // Prints the content of "buffer" to STDOUT. Cleans "buffer".
   case 14: 
-    buffer << endl << string(110, '-') << endl << timestamp(1) << "A problem occured in the program :\n" << _text << endl << string(110, '-'); 
+    buffer << endl << string(73, '-') << endl << timestamp(1) << "A problem occured in the program :\n" << _text << endl << string(73, '-'); 
     textToSave.append(buffer.str()); buffer.str(""); break;
   case 15: // Prepends the timestamp before the "_text". Writes alltogether into "buffer". Cleans buffer. Writes Only "_text" into "buffer".
-    buffer << endl << timestamp(1) << string(6, '=') << setw(50) << left << _text << string(30, '=') << endl << string(110, '-') << endl; 
+    buffer << endl << timestamp(1) << string(3, '=') << setw(50) << left << _text << endl << string(73, '-') << endl; 
     textToSave.append(buffer.str()); buffer.str("");
-    buffer << endl << string(30, '=') << setw(50) << left << _text << string(30, '=') << endl << string(110, '-') << endl; break;
-  case 16: cout << endl << string(20, '=') << setw(60) << left << _text << string(20, '=') << endl; break;
-  case 17: cout << string(100, '-') << endl << setw(2) << left << "|" << setw(10) << _text; break;
-  case 18: cout << setw(2) << left << "|" << setw(84) << _text << setw(2) << right << "|" << endl; break;
+    buffer << endl << string(10, '=') << setw(50) << left << _text << string(12, '=') << endl << string(73, '-') << endl; break;
+  case 16: cout << endl << string(2, '=') << setw(69) << left << _text << string(2, '=') << endl; break;
+  case 17: cout << string(73, '-') << endl << setw(2) << left << "|" << setw(5) << _text; break;
+  case 18: cout << setw(2) << left << "|" << setw(62) << _text << setw(2) << right << "|" << endl; break;
   case 19: cout << "\nYou have pressed the key \"" << _text <<"\". There is no such option in this menu. Please try again.\n\n"; break;
   case 20: 
     printMsg(17, "TAB"); printMsg(18, "Back to the previous menu."); 
-    printMsg(17, "ESC"); printMsg(18, "Exit the program."); cout << string(100, '-'); break;
+    printMsg(17, "ESC"); printMsg(18, "Exit the program."); cout << string(73, '-'); break;
   case 21: 
     printMsg(17, "TAB"); printMsg(18, "Back to the previous menu."); 
-    printMsg(17, "BACKSPACE"); printMsg(18, "Remove the last character."); 
-    printMsg(17, "ESC"); printMsg(18, "Exit the program."); cout << string(100, '-'); break;
+    printMsg(17, "BACKSPACE"); cout << setw(2) << left << " | " << setw(57) << "Remove the last character." << setw(2) << right << "|" << endl;
+    printMsg(17, "ESC"); printMsg(18, "Exit the program."); cout << string(73, '-'); break;
   default: break;
-  } if (_w2 != -1) printMsg(_w2);
+  } if (_w2 != -1) printMsg(_w2, _text2);
 }
 
 // Tool Function 4 | Used to print the schedule. (Main loop, options a,b,c)
@@ -138,20 +131,20 @@ template <typename T0, typename T1, typename T2, typename T3, typename T4>
 void print_row(std::ostream& os, T0 const& t0, T1 const& t1, T2 const& t2, T3 const& t3, T4 const& t4, bool last)
 {
   if (last) {
-    os << "*" << string(21, '-') << "*" << string(20, '-') << "*" 
-    << string(20, '-') << "*" << string(21, '-') << "*" << string(23, '-') << "*" << endl; return; 
-  } os << "." << string(21, '-') << "|" << string(20, '-') << "|" << string(20, '-') << "|" 
-    << string(21, '-')     << "|" << string(23, '-') << "." << endl << setw(2) << left 
-    << "|" << std::setw(8) << " " << std::setw(12) << t0 
-    << "|" << std::setw(6) << " " << std::setw(14) << t1 
-    << "|" << std::setw(5) << " " << std::setw(15) << t2
-    << "|" << std::setw(3) << " " << std::setw(18) << t3 
-    << "|" << std::setw(9) << " " << std::setw(13) << t4 << setw(2) << right << "|" << "\n";
+   os << "*" << string(10, '-') << "*" << string(13, '-') << "*" << string(14, '-') << "*" 
+    << string(17, '-') << "*" << string(13, '-') << "*" << endl; return;  
+  } os << "." << string(10, '-') << "|" << string(13, '-') << "|" << string(14, '-') << "|" 
+    << string(17, '-') << "|" << string(13, '-') << "." << endl << setw(1) << left 
+
+    << "|" << std::setw(1) << " " << std::setw(9) << t0 
+    << "|" << std::setw(1) << " " << std::setw(12) << t1 
+    << "|" << std::setw(1) << " " << std::setw(13) << t2
+    << "|" << std::setw(1) << " " << std::setw(16) << t3 
+    << "|" << std::setw(1) << " " << std::setw(12) << t4 << setw(1) << right << "|" << "\n";
 }
 
 // Tool Function 6 | If "tui" (terminal-user-interface) is false, then add/remove the student non-interactively.
-// void manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=true, bool _random=true, int _groupNum=0) {
-bool manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=true, bool _random=true, int _groupNum=0) {
+bool manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=true, bool _random=true, int _groupNum=0, bool toSTDOUT=false) {
 
   if (!_tui) {
     if (!_student) 
@@ -165,28 +158,17 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=tru
       else continue;
       } group.get()->addStudentToGroup(_student); assigned = true; assignedG = group.get()->getNumber(); break;
     }
-    if (!assigned)
+    if (!assigned && toSTDOUT)
       _random ? printMsg(14, "Unfortunately, all the groups are full.") : printMsg(14, "Unfortunately, the group \""+to_string(_groupNum) + "\"is full");
-    else printMsg(16, " The entered student was successfully assigned to the group number " + to_string(assignedG) + " ", 20);
-
-    // // For Debugging.
-    // for (auto group : allGroups) {
-    //   std::cout << "MANAGE GRPS | INLOOP2 | group.get()->getNumber() = " << group.get()->getNumber() << std::endl;
-    //   for (auto _student : group.get()->getAllStudents()) {
-    //     std::cout << "MANAGE GRPS | INLOOP2 | _student.get()->getLastName() = " << _student.get()->getLastName() << std::endl;
-    //   }
-    // }
-    // return true;
+    else if (toSTDOUT) printMsg(16, " The entered student was successfully assigned to the group number " + to_string(assignedG) + " ", 20);
     return assigned;
   }
 
-
-  // string lastN, parentN, phoneNum, paidL;
-  bool inOption2 = false, confirm = true;
-  string text; char qt2 = ' ';
-  // cout << "MAIN | BEFORE LAMBDA0 \n";
-  auto validateString = [qt2](string& str, bool strIsPNum=false, bool strIsNum=false) mutable {
-    if (str.empty()) {cout << "This value cannot be empty.\n\n"; return false;}
+  bool inOption2 = false, confirm = true; string text; char qt2 = ' ';
+  auto validateField = [qt2](string& str, bool strIsPNum=false, bool strIsNum=false, bool strIsGroupId=false) mutable {
+    if (!strIsPNum && !strIsNum && str.length() < 2) {cout << "This value cannot be empty or have less than 2 characters.\n\n"; return false;}
+    if (strIsPNum && (str.length() < 12 || str.length() > 15) )
+      {cout << "The phone number cannot be less than 11 characters, (including country code).\nIt cannot be more than 15 characters.\n\n"; return false;}
     for (int i = 0; i < str.length(); i++) { qt2 = str[i]; 
       // 65-90 in ASCII means range of upper case letters, 97-122 - lower case letteres. 
       if ( ((qt2 <= 64) || (qt2 >= 91)) && ((qt2 <= 96) || (qt2 >= 123)) && !strIsPNum && !strIsNum ) 
@@ -200,14 +182,26 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=tru
       if ( ((qt2 <= 47) || (qt2 >= 58)) && !strIsPNum && strIsNum) 
       { cout << "This value accepts only digits \"0123456789\". You've entered other characters as well.\n"
             << "Please use BACKSPACE to correct the value.\n\n";  return false; }
+      if (strIsGroupId) { bool ableToAssignToGroup=false, groupExist=false;
+        cout << " The list of available groups (their group ids), excluding full (10 students already) groups: \n ";
+        for (auto group : allGroups) {
+          cout << group.get()->getNumber() << " ";
+          if (group.get()->getAllStudents().size() == 10) { 
+            if (stoi(str) == group.get()->getNumber()) { groupExist = true; ableToAssignToGroup=false; }
+            continue; 
+          } else if (stoi(str) == group.get()->getNumber()) { groupExist = true; ableToAssignToGroup = true; }
+        }
+        if (!groupExist) { cout << "\n The group with the ID \""+str+"\" does not exist. Please use BACKSPACE to correct the value.\n";return false;}
+        if (!ableToAssignToGroup) { cout << "Not able to assign to the group with ID \"" + str + "\".\n\n"; return false; }
+      }
     } return true;
   };
 
-  auto checkInputLambda = [&text, validateString, qt2](string& fieldVar, string fieldVarMeaning,
-                                  bool fieldVarIsPNum=false, bool fieldVarIsNum=false) mutable {
+  auto checkInput = [&text, validateField, qt2](string& fieldVar, string fieldVarMeaning,
+                                  bool fieldVarIsPNum=false, bool fieldVarIsNum=false, bool strIsGroupId=false) mutable {
     system("CLS");
     printMsg(11, fieldVarMeaning, 21, fieldVar);
-    while (true) {
+    while (true)
       if (_kbhit() && (qt2 = _getch())) { 
         system("CLS");
         switch (qt2) {
@@ -217,18 +211,17 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=tru
             if (fieldVar.empty()) {printMsg(11, fieldVarMeaning, 21, fieldVar); continue;}
             fieldVar.pop_back(); printMsg(11, fieldVarMeaning, 21, fieldVar); continue;
           case(10):case(13): // 10 - LINE FEED ("ENTER" key on Linux). 13 - CARRIAGE RETURN ("ENTER" on Windows)
-            if (!validateString(fieldVar, fieldVarIsPNum, fieldVarIsNum)) { printMsg(11, fieldVarMeaning, 21, fieldVar); continue;}
+            if (!validateField(fieldVar, fieldVarIsPNum, fieldVarIsNum, strIsGroupId)) { printMsg(11, fieldVarMeaning, 21, fieldVar); continue;}
             system("CLS"); return true;
           default: 
             fieldVar += qt2;
             printMsg(11, fieldVarMeaning, 21, fieldVar); continue;
         }
       }
-    }
   };
 
-  system("CLS"); printMsg(4, "", 20); string lastN="", parentN="", phoneNum="", paidL="";
-  while (true) {
+  system("CLS"); printMsg(4, "", 20); string lastN="", parentN="", phoneNum="", paidL="", groupN="";
+  while (true)
     if (_kbhit() && (qt2 = _getch())) { system("CLS");
       switch (qt2) {
         case(9):                       // decimal 9 - "TAB" as char (ASCII) | Go back to the previous menu.
@@ -262,28 +255,33 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=tru
           if (inOption2) printMsg(19, string(1, qt2), 20); 
           else {
             printMsg(16, " Enter the details for the new student: ");
-            // Ref: checkInputLambda = [&text, validateString](char& qt2, string& fieldVar, string fieldVarMeaning,
+            // Ref: checkInputLambda = [&text, validateField](char& qt2, string& fieldVar, string fieldVarMeaning,
             //                     bool fieldVarIsPNum=false, bool fieldVarIsNum=false) mutable {
-            if ( !checkInputLambda(lastN, "last name", 0, 0) || !checkInputLambda(parentN, "parent name", 0, 0) 
-                 || !checkInputLambda(phoneNum, "phone number (in the format: \"+38(095)4779450\")", 1) 
-                 || !checkInputLambda(paidL, "paid lessons", 0, 1) ) { inOption2 = false; printMsg(4, "", 20); break; }
+            if ( !checkInput(lastN, " last name", 0, 0) || !checkInput(parentN, " parent name", 0, 0) 
+              || !checkInput(phoneNum, " phone number (in the format: \"+38(095)4779450\")", 1) || !checkInput(paidL, " paid lessons", 0, 1) 
+              || !checkInput(groupN, " group number (or leave it empty for the random available group) ", 0, 1, 1) ) 
+              { inOption2 = false; lastN="",parentN="",phoneNum="",paidL=""; printMsg(4, "", 20); break; }
             printMsg(16, " You've entered the new Student with the following details. ");
-            print_row(cout, "", "last name", "parent name", "phone number", "paid lessons", 0);
-            print_row(cout, "", lastN, parentN, phoneNum, paidL, 0);
-            printMsg(16, " Please press \"ENTER\" if these details are correct. ", 20); cin.ignore();
-            // Ref: manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=true, bool _random=true, int _groupNum=0) {
-            manageGroups(0, std::make_shared<Student>(lastN, parentN, phoneNum, stoi(paidL)));
-            lastN="",parentN="",phoneNum="",paidL=""; inOption2 = true;
+            std::transform(lastN.begin(), lastN.end(), lastN.begin(),[](unsigned char c) { return std::tolower(c); });
+            std::transform(parentN.begin(), parentN.end(), parentN.begin(),[](unsigned char c) { return std::tolower(c); });
+            lastN[0] = std::toupper(lastN[0]), parentN[0] = std::toupper(parentN[0]);
+            if (groupN.empty()) groupN = "(empty)";
+            print_row(cout, "group id", "last name", "parent name", "phone number", "paid lessons", 0);
+            print_row(cout, groupN, lastN, parentN, phoneNum, paidL, 0); print_row(buffer, 0, "", "", 0, 0, 1);
+            printMsg(16, " Please press \"ENTER\" if these details are correct. ", 16, " Or press any other key to discard."); printMsg(20);
+            qt2 = _getch(); if (qt2 != 13) { inOption2 = false; lastN="",parentN="",phoneNum="",paidL="",groupN=""; system("CLS"); 
+              printMsg(16, " Entered information was discarded.",20); break; }
+            // manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=true, bool _random=true, int _groupNum=0, bool toSTDOUT=false)
+            if (groupN[0] == '(') manageGroups(0, std::make_shared<Student>(lastN, parentN, phoneNum, stoi(paidL)),1,1,0,1);
+            else manageGroups(0, std::make_shared<Student>(lastN, parentN, phoneNum, stoi(paidL)),1,0,stoi(groupN),1);
+            lastN="",parentN="",phoneNum="",paidL="",groupN=""; inOption2 = true;
           } break;
 
         default: 
           printMsg(19, string(1, qt2), 20); 
           break;
       }
-
     }
-  }
-
   return true;
 }
 
@@ -305,18 +303,19 @@ int main() {
 
   // Generating the 5 "Student" objects. Assigning them all to the "Group" with the "number" field = 3.
   tmp1 = new string[5]{"Tichenko","Chujkevych","Pidoplichko","Ovrah","Hrynishak"}, tmp3 = new string[5]{"Sharl","Ustym","Emil","Jonas","Fedir"};
-  tmp2 = new string[5]{"+38(730)7621483","+380(884)8890726","+380(248)8717477","+380(668)4952298","+380(404)2303088"}; tmp5 = new int[5]{4,10,9,8,3};
-  for (int i=0; i<=4; i++) manageGroups(0, std::make_shared<Student>(tmp1[i],tmp3[i],tmp2[i], tmp5[i]),1,0,3);
+  tmp2 = new string[5]{"+38(730)7621483","+38(088)4889072","+38(024)8871747","+380(668)495229","+38(040)4230308"}; tmp5 = new int[5]{4,10,9,8,3};
+  for (int i=0; i<=4; i++) manageGroups(0, std::make_shared<Student>(tmp1[i],tmp3[i],tmp2[i],tmp5[i]),1,0,3);
 
-  // For ref: void manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=true, bool _random=true, int _groupNum=0)
+  // For ref: bool manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=true, bool _random=true, int _groupNum=0, bool toSTDOUT=false)
 
   // Generating another 5 "Student" objects. Assigning them to the groups, randomly.
   tmp1 = new string[5]{"Arseniuk","Pastukh","Nechytailo","Polozhii","Holovinskyi"}, tmp3 = new string[5]{"Nihoslav","Pershyk","Chestyslav","Velet","Klym"};
   tmp2 = new string[5]{"+38(542)2578432","+38(472)7682276","+38(827)3367671","+38(352)3966987","+38(797)4122186"}; tmp5 = new int[5]{7,6,6,5,7};
-  for (int i=0; i<=4; i++) manageGroups(0, std::make_shared<Student>(tmp1[i],tmp3[i],tmp2[i], tmp5[i]),1,1);
+  for (int i=0; i<=4; i++) manageGroups(0, std::make_shared<Student>(tmp1[i],tmp3[i],tmp2[i], tmp5[i]));
 
-  manageGroups(0, std::make_shared<Student>("Turkevych","Avrelii","+380(118)7284874", 4),1,0,1);
-  manageGroups(0, std::make_shared<Student>("Kompanec","Lyubodar ","+380(783)5566764", 2),1,0,1);
+  // Generating the 2 "Student" objects. Assigning them all to the "Group" with the "number" field = 2.
+  manageGroups(0, std::make_shared<Student>("turkevych","avrelii","+38(011)8728487", 4),1,0,2);
+  manageGroups(0, std::make_shared<Student>("KoMpAneC","Lyubodar ","+38(078)3556676", 2),1,0,2);
   manageGroups(0, nullptr,1,0,1); // Generating the "Student" object as "nullptr" and passing it to this same function.
 
   weeklySchedule.days.push_back({ "Monday", {
@@ -369,7 +368,7 @@ int main() {
   char qt = ' '; 
   bool inOption = false;
 
-  system("CLS");
+  // system("CLS");
   printMsg(0, "", 20); 
   while (true) {
     if (_kbhit()) {
@@ -383,21 +382,25 @@ int main() {
           else { printScheduleFunction(weeklySchedule); printMsg(20); inOption = true; } break; 
 
         case(98): // decimal 98 - "b" as char (ASCII) | Print the schedule for the particular track or group. 
-          if (inOption) printMsg(19, string(1, qt), 20); 
-          else { printMsg(15, " Printing the schedule for the particular track or group. ", 13); inOption = true; } break; 
+          if (inOption) printMsg(19, string(1, qt), 20);
+          else {
+            int groupOrLaneNumber; std::cout << "Enter 'g' for group or 'l' for lane: " << (qt = _getch()) << endl;
+            if (qt == 103 || qt == 108) { std::cout << "Enter " << (qt == 103 ? "group" : "lane") << " number: "; std::cin >> groupOrLaneNumber; } 
+            else { std::cerr << "\nInvalid option. Use 'g' for group or 'l' for lane.\n"; break; }
+            printScheduleForGroupOrLane(buffer, weeklySchedule, qt, groupOrLaneNumber, timestamp(1)); printMsg(12, "", 20);
+            inOption = true; 
+          } break;
 
         case(99): // decimal 99 - "c" as char (ASCII) | Print the schedule for the particular instructor or student.
           if (inOption) printMsg(19, string(1, qt), 20); 
-          else { printMsg(15, " Printing the schedule for the particular person. ", 13); inOption = true; } break; 
+          else { printMsg(15, " Printing schedule for the particular person. ", 13); inOption = true; } break; 
 
         case(100): // decimal 100 - "d" as char (ASCII) | Modify/create groups. Add/remove students to/from the group.
           if (inOption) printMsg(19, string(1, qt), 20); 
-          else { manageGroups(1); printMsg(0, "", 20); }
-          break;
+          else { manageGroups(1); printMsg(0, "", 20); } break;
 
         default: 
-          printMsg(19, string(1, qt), 20); 
-          break;
+          printMsg(19, string(1, qt), 20); break;
       }
     }
   } 

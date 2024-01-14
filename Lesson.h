@@ -83,3 +83,50 @@ void printSchedule(std::ostream& os, const WeeklySchedule& schedule, std::string
         }
     }
 }
+
+void printScheduleForGroupOrLane(std::ostream& os, const WeeklySchedule& schedule, char option, int groupOrLaneNumber, std::string timestamp = "")
+{
+    std::string optionLabel;
+    std::string optionHeader;
+    if (option == 'g') {
+        optionLabel = "Group";
+        optionHeader = "Lane Number";
+    }
+    else if (option == 'l') {
+        optionLabel = "Lane";
+        optionHeader = "Group Number";
+    }
+    else {
+        std::cerr << "Invalid option. Use 'g' for group or 'l' for lane.\n";
+        return;
+    }
+
+    // os << "\n====================== Weekly Schedule for " << optionLabel << " " << groupOrLaneNumber << " ======================\n"
+    os << std::endl << timestamp << std::string(5,'=') << " Weekly Schedule for " << optionLabel << " " << groupOrLaneNumber 
+       << " " << std::string(15,'=') << std::endl
+       << "-------------------------------------------------------------------------\n"
+       << std::left << std::setw(16) << "Day" << std::setw(16) << "|Time" << std::setw(21) << "|" + optionHeader << std::setw(19) << "|Instructor" << "|"
+       << "\n-------------------------------------------------------------------------\n";
+    for (const auto& day : schedule.days) {
+        for (const auto& lesson : day.lessons) {
+            if (option == 'g' && lesson.groupNumber->getNumber() == groupOrLaneNumber)
+            {
+                os
+                    << std::left << std::setw(16) << day.day
+                    << "|" << std::setw(15) << lesson.time
+                    << "|" << std::setw(20) << lesson.lane->getLaneNumber()
+                    << "|" << std::setw(18) << lesson.instructorName->getLastName() << "|" << "\n";
+            }
+
+            else if (option == 'l' && lesson.lane->getLaneNumber() == groupOrLaneNumber)
+            {
+                os << "Day: " << day.day << "\n"
+                   << "Time: " << lesson.time << "\n"
+                   << "Group number: " << lesson.groupNumber->getNumber() << "\n"
+                   << "Instructor: " << lesson.instructorName->getLastName() << "\n\n";
+            }
+
+        }
+    }
+    os << "=========================================================================\n";
+}
