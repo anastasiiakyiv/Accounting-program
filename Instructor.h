@@ -4,18 +4,14 @@
 #include <memory>
 #include <string>
 
-class Lesson;
-
 class Instructor
 {
     std::string lastName;
     std::string phoneNumber;
     double hourlyRate;
-    std::vector<std::shared_ptr<Lesson>> schedule;
 
 public:
-
-
+  
     Instructor(const std::string& last, const std::string& phone, double rate)
         : lastName(last), phoneNumber(phone), hourlyRate(rate) {
 

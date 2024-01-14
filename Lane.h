@@ -1,15 +1,13 @@
 #pragma once
-#include "Lesson.h"
-
-/*class Lane
+class Lane
 {
-    int number;
+  int number;
 
-public:
+  public:
     Lane(int number) : number(number) {}
 
     int getLaneNumber() const
     {
         return number;
     }
-};*/
+};

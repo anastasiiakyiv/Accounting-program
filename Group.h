@@ -28,11 +28,11 @@ public:
         // //    std::cout << "GROUP | addStudentToGroup | INLOOP | student.get()->getLastName() = " << _student.get()->getLastName() << std::endl;
         // }
     }
-
-    int removeStudentFromGroup(std::shared_ptr<Student> student)
-    {
-        auto it = std::find(students.begin(), students.end(), student);
-        if (it == students.end()) return 0;
-        students.erase(it); return 1;
-    }
+  
+   int removeStudentFromGroup(std::shared_ptr<Student> student)
+   {
+    auto it = std::find(students.begin(), students.end(), student);
+      if (it == students.end()) return 0;
+      students.erase(it); return 1;
+   }
 };
