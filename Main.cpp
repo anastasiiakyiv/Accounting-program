@@ -405,8 +405,19 @@ int main() {
         break;
         
         case(99): // decimal 99 - "c" as char (ASCII) | Print the schedule for the particular instructor or student.
-          if (inOption) printMsg(19, string(1, qt), 20); 
-          else { printMsg(15, " Printing the schedule for the particular person. ", 13); inOption = true; } break; 
+          if (inOption) printMsg(19, string(1, qt), 20);
+          else {
+              char personOption;
+              std::string identifier;
+              std::cout << "Enter 's' for student or 'i' for instructor: ";
+              std::cin >> personOption;
+              std::cout << "Enter " << (personOption == 's' ? "phone number (in the format: \"+38(095)4779450\")" : "last name") << ": ";
+              std::cin >> identifier;
+              printScheduleForPerson(weeklySchedule, personOption, identifier);
+              printMsg(20);
+              inOption = true;
+         }
+         break; 
 
         case(100): // decimal 100 - "d" as char (ASCII) | Modify/create groups. Add/remove students to/from the group.
           if (inOption) printMsg(19, string(1, qt), 20); 
