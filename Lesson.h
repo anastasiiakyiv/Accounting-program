@@ -128,3 +128,51 @@ void printScheduleForGroupOrLane(const WeeklySchedule& schedule, char option, in
     }
     std::cout << "=========================================================================\n";
 }
+
+void printScheduleForPerson(const WeeklySchedule& schedule, char option, const std::string& identifier)
+{
+    std::cout << "\n===================== Weekly Schedule \t\t========================\n";
+    std::cout << "-------------------------------------------------------------------------\n";
+
+    if (option == 's') { // Search by student's phone number
+        std::cout << std::left << std::setw(16) << "Day" << std::setw(14) << "|Time" << std::setw(12)
+            << "|Lane" << std::setw(12) << "|Group" << std::setw(18) << "|Instructor" << "|";
+        std::cout << "\n-------------------------------------------------------------------------\n";
+        for (const auto& day : schedule.days) {
+            for (const auto& lesson : day.lessons) {
+                for (const auto& student : lesson.groupNumber->getAllStudents()) {
+                    if (student->getPhoneNumber() == identifier) {
+                        std::cout
+                            << std::left << std::setw(16) << day.day
+                            << "|" << std::setw(13) << lesson.time
+                            << "|" << std::setw(11) << lesson.lane->getLaneNumber()
+                            << "|" << std::setw(11) << lesson.groupNumber->getNumber()
+                            << "|" << std::setw(17) << lesson.instructorName->getLastName() << "|" << "\n";
+                    }
+                }
+            }
+        }
+    }
+    else if (option == 'i') { // Search by instructor's last name
+        std::cout << std::left << std::setw(16) << "Day" << std::setw(16) << "|Time" << std::setw(21)
+            << "|Lane" << std::setw(19) << "|Group" << std::setw(18) << "|";
+        std::cout << "\n-------------------------------------------------------------------------\n";
+        for (const auto& day : schedule.days) {
+            for (const auto& lesson : day.lessons) {
+                if (lesson.instructorName->getLastName() == identifier) {
+                    std::cout
+                        << std::left << std::setw(16) << day.day
+                        << "|" << std::setw(15) << lesson.time
+                        << "|" << std::setw(20) << lesson.lane->getLaneNumber()
+                        << "|" << std::setw(18) << lesson.groupNumber->getNumber() << "|" << "\n";
+                }
+            }
+        }
+    }
+    else {
+        std::cerr << "Invalid option. Use 's' for student or 'i' for instructor.\n";
+        return;
+    }
+
+    std::cout << "=========================================================================\n";
+}
