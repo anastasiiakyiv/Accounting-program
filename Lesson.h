@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "Lane.h"
 #include "Instructor.h"
 #include "Group.h"
@@ -55,7 +56,7 @@ public:
     std::vector<DailySchedule> days;
 };
 
-void printSchedule(std::ostream& os, const WeeklySchedule& schedule, std::string timestamp = "", bool color = false)
+void printSchedule(std::ostream& os, std::shared_ptr<WeeklySchedule> schedule, std::string timestamp = "", bool color = false)
 {
     os << (color ? BLUE : "" ) << std::endl << timestamp << std::string(5, '=') 
     << std::setw(30) << std::left << " Generalized weekly schedule. " 
@@ -66,7 +67,7 @@ void printSchedule(std::ostream& os, const WeeklySchedule& schedule, std::string
     << std::setw(18) << std::left << "| Group number" << "    |"
     << "\n-----------------------------------------------------------------------------\n" << (color ? RESET : "" );
 
-    for (const auto& day : schedule.days) {
+    for (const auto& day : schedule.get()->days) {
         os << (color ? BLUE : "" ) << std::setw(10) << std::left << day.day 
            << "                                                                  |"
            << "\n-----------------------------------------------------------------------------" << (color ? RESET : "" );
@@ -89,7 +90,7 @@ void printSchedule(std::ostream& os, const WeeklySchedule& schedule, std::string
     }
 }
 
-void printScheduleForGroupOrLane(std::ostream& os, const WeeklySchedule& schedule, char option, int groupOrLaneNumber, std::string timestamp = "")
+void printScheduleForGroupOrLane(std::ostream& os, std::shared_ptr<WeeklySchedule> schedule, char option, int groupOrLaneNumber, std::string timestamp = "")
 {
     std::string optionLabel;
     std::string optionHeader;
@@ -112,7 +113,7 @@ void printScheduleForGroupOrLane(std::ostream& os, const WeeklySchedule& schedul
        << "-------------------------------------------------------------------------\n"
        << std::left << std::setw(16) << "Day" << std::setw(16) << "|Time" << std::setw(21) << "|" + optionHeader << std::setw(19) << "|Instructor" << "|"
        << "\n-------------------------------------------------------------------------\n";
-    for (const auto& day : schedule.days) {
+    for (const auto& day : schedule.get()->days) {
         for (const auto& lesson : day.lessons) {
             if (option == 'g' && lesson.groupNumber->getNumber() == groupOrLaneNumber)
             {

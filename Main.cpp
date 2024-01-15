@@ -53,7 +53,6 @@ std::stringstream buffer;
 std::vector<std::shared_ptr<Lane>> allLanes;
 std::vector<std::shared_ptr<Group>> allGroups;
 std::vector<std::shared_ptr<Instructor>> allInstructors;
-WeeklySchedule weeklySchedule; // Creating a schedule
 
 string timestamp(bool format) {// Tool Function 1 | Returns formatted string, which contains time/date from system. (Used by other functions)
   struct tm time; __time32_t aclock; char timestamp[32];
@@ -114,21 +113,25 @@ void printMsg(int _window, string _text = "", int _w2 = -1, string _text2 = "", 
   } if (_w2 != -1) printMsg(_w2, _text2, -1, "", _setw, eqCount);
 }
 
-// Tool Function 4 | Used to print the schedule. (Main loop, options a,b,c)
-using PrintScheduleFunction = void (*)(const WeeklySchedule&); // Using a function pointer
-// This printWeeklySchedule function uses the printSchedule function to output the weekly schedule
-void printWeeklySchedule(const WeeklySchedule& schedule) {
-  printSchedule(buffer, schedule, timestamp(1));
-  printSchedule(cout, schedule, timestamp(1), 1);
-  // printMsg(12);
-  printMsg(10);
-} PrintScheduleFunction printScheduleFunction = printWeeklySchedule;
+// // Tool Function 4 | Used to print the schedule. (Main loop, options a,b,c)
+// using PrintScheduleFunction = void (*)(const WeeklySchedule&); // Using a function pointer
+// // This printWeeklySchedule function uses the printSchedule function to output the weekly schedule
+// void printWeeklySchedule(const WeeklySchedule& schedule) {
+//   printSchedule(buffer, schedule, timestamp(1));
+//   printSchedule(cout, schedule, timestamp(1), 1);
+//   // printMsg(12);
+//   printMsg(10);
+// } PrintScheduleFunction printScheduleFunction = printWeeklySchedule;
 
 // Tool Function 5 | Used by "ManageGroups" to print list of students per each group. (Main loop, option d - 1)
 template <typename T0, typename T1, typename T2, typename T3, typename T4>
-void print_row(std::ostream& os, T0 const& t0, T1 const& t1, T2 const& t2, T3 const& t3, T4 const& t4, 
-bool last=false, bool groupName=false, bool color=false)
+void print(std::ostream& os, T0 const& t0, T1 const& t1, T2 const& t2, T3 const& t3, T4 const& t4, 
+  bool last=false, bool groupName=false, bool color=false, shared_ptr<WeeklySchedule> scheduleObj=nullptr)
 {
+  if (scheduleObj) 
+   {if (!color) { printSchedule(os, scheduleObj, timestamp(1)); printMsg(12); return; }
+    printSchedule(os, scheduleObj, timestamp(1)); printSchedule(cout, scheduleObj, timestamp(1), 1); printMsg(10); return; }
+
   if (groupName) { 
     os << (color ? BLUE : "" ) << "." << string(75, '-') << "." << endl << setw(1) << left 
     << "|" << std::setw(13) << left << " Group ID |   " << setw(61) << t0 << right << "|\n" << (color ? RESET : "" ); return; 
@@ -232,23 +235,23 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=tru
             printMsg(15, " Printing all students from all the groups ", -1, "", 40, 24);
             for (auto _group : allGroups) { auto _groupp = _group.get();
                                                                   // Print into the "Buffer", eventually, File - not colored.
-              print_row(buffer, _groupp->getNumber() ,"", "", "", "", 0, 1);
-              print_row(buffer, "First name" ,"Last name", "Parent name", "Phone number", "Paid lessons");
+              print(buffer, _groupp->getNumber() ,"", "", "", "", 0, 1);
+              print(buffer, "First name" ,"Last name", "Parent name", "Phone number", "Paid lessons");
                                                                   // Print into the STDOUT - Colored.
-              print_row(cout, _groupp->getNumber() ,"", "", "", "", 0, 1, 1);
-              print_row(cout, "First name" ,"Last name", "Parent name", "Phone number", "Paid lessons", 0, 0, 1);
+              print(cout, _groupp->getNumber() ,"", "", "", "", 0, 1, 1);
+              print(cout, "First name" ,"Last name", "Parent name", "Phone number", "Paid lessons", 0, 0, 1);
               for (auto _student : _groupp->getAllStudents()) 
               { auto _studentt = _student.get();
                                                                   // Print into the "Buffer", eventually, File - not colored.
-                print_row(buffer, _studentt->getFirstName(), _studentt->getLastName(), _studentt->getParentName(), 
+                print(buffer, _studentt->getFirstName(), _studentt->getLastName(), _studentt->getParentName(), 
                 _studentt->getPhoneNumber(), _studentt->getPaidLessons());
                                                                   // Print into the STDOUT - Colored.
-                print_row(cout, _studentt->getFirstName(), _studentt->getLastName(), _studentt->getParentName(), 
+                print(cout, _studentt->getFirstName(), _studentt->getLastName(), _studentt->getParentName(), 
                 _studentt->getPhoneNumber(), _studentt->getPaidLessons(), 0, 0, 1);
               }
             } 
-            print_row(buffer, 0, 0, 0, 0, 0, 1);                  // Print into the "Buffer", eventually, File - not colored.
-            print_row(cout, 0, 0, 0, 0, 0, 1, 0, 1);              // Print into the STDOUT - Colored.
+            print(buffer, 0, 0, 0, 0, 0, 1);                  // Print into the "Buffer", eventually, File - not colored.
+            print(cout, 0, 0, 0, 0, 0, 1, 0, 1);              // Print into the STDOUT - Colored.
             // .---------------------------------------------------------------------------.
             // | group id    | 1                                                           |
             // .---------------------------------------------------------------------------.
@@ -285,10 +288,10 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student=nullptr, bool _add=tru
             firstN[0] = std::toupper(firstN[0]), lastN[0] = std::toupper(lastN[0]), parentN[0] = std::toupper(parentN[0]);
 
             if (groupN.empty()) groupN = "(empty)";
-            print_row(cout,groupN,0,0,0,0,0,1,1);
-            print_row(cout, "First name", "Last name", "Parent name", "Phone number", "Paid lessons",0,0,1);
-            print_row(cout, firstN, lastN, parentN, phoneNum, paidL, 0,0,1); 
-            // print_row(buffer, 0, "", "", 0, 0, 1);
+            print(cout,groupN,0,0,0,0,0,1,1);
+            print(cout, "First name", "Last name", "Parent name", "Phone number", "Paid lessons",0,0,1);
+            print(cout, firstN, lastN, parentN, phoneNum, paidL, 0,0,1); 
+            // print(buffer, 0, "", "", 0, 0, 1);
             printMsg(16, " Please press \"ENTER\" if these details are correct. ", 16, " Or press any other key to discard.", 54, 21);
             qt2 = _getch(); if (qt2 != 13) { inOption2 = false; firstN="", lastN="",parentN="",phoneNum="",paidL="",groupN=""; system("CLS"); 
               printMsg(16, " Entered information was discarded.",20,"",54,21); break; }
@@ -342,8 +345,9 @@ int main() {
   manageGroups(0, std::make_shared<Student>("Panas","turkevych","avrelii","+38(011)8728487", 4),1,0,2);
   manageGroups(0, std::make_shared<Student>("Ostap","KoMpAneC","Lyubodar ","+38(078)3556676", 2),1,0,2);
   manageGroups(0, nullptr,1,0,1); // Generating the "Student" object as "nullptr" and passing it to this same function.
-
-  weeklySchedule.days.push_back({ "Monday", {
+  
+  auto weeklySchedulePtr = std::make_shared<WeeklySchedule>();
+  weeklySchedulePtr->days.push_back({ "Monday", {
       {"09:00-09:45", allLanes[0], allInstructors[2], allGroups[0]},
       {"10:15-11:00", allLanes[0], allInstructors[2], allGroups[0]},
       {"10:15-11:00", allLanes[1], allInstructors[3], allGroups[2]},
@@ -351,12 +355,12 @@ int main() {
       {"11:30-12:15", allLanes[1], allInstructors[3], allGroups[2]},
   } });
 
-  weeklySchedule.days.push_back({ "Tuesday", {
+  weeklySchedulePtr->days.push_back({ "Tuesday", {
         {"16:30-17:15", allLanes[2], allInstructors[0], allGroups[1]},
         {"17:45-18:30", allLanes[2], allInstructors[0], allGroups[1]},
     } });
 
-  weeklySchedule.days.push_back({ "Wednesday", {
+  weeklySchedulePtr->days.push_back({ "Wednesday", {
         {"10:15-11:00", allLanes[0], allInstructors[6], allGroups[0]},
         {"10:15-11:00", allLanes[1], allInstructors[5], allGroups[3]},
         {"11:30-12:15", allLanes[0], allInstructors[6], allGroups[0]},
@@ -364,12 +368,12 @@ int main() {
         {"15:15-16:00", allLanes[2], allInstructors[1], allGroups[2]},
     } });
 
-  weeklySchedule.days.push_back({ "Thursday", {
+  weeklySchedulePtr->days.push_back({ "Thursday", {
         {"16:30-17:15", allLanes[2], allInstructors[0], allGroups[1]},
         {"17:45-18:30", allLanes[2], allInstructors[0], allGroups[1]},
     } });
 
-  weeklySchedule.days.push_back({ "Friday", {
+  weeklySchedulePtr->days.push_back({ "Friday", {
         {"09:00-09:45", allLanes[0], allInstructors[1], allGroups[2]},
         {"10:15-11:00", allLanes[2], allInstructors[7], allGroups[3]},
         {"10:15-11:00", allLanes[0], allInstructors[1], allGroups[2]},
@@ -377,7 +381,7 @@ int main() {
         {"12:45-13:30", allLanes[2], allInstructors[7], allGroups[0]},
   } });
 
-  weeklySchedule.days.push_back({ "Saturday", {
+  weeklySchedulePtr->days.push_back({ "Saturday", {
         {"11:30-12:15", allLanes[1], allInstructors[4], allGroups[1]},
         {"12:45-13:30", allLanes[1], allInstructors[4], allGroups[1]},
   } });
@@ -393,7 +397,8 @@ int main() {
         case(27): return 0; break;                                // dec 27 - "ESCAPE" as char (ASCII) | Exit Program.
         case(97):                                                 // dec 97 - "a" as char (ASCII) | Print generalized schedule.
           if (inOption) printMsg(19, string(1, qt), 20); 
-          else { printScheduleFunction(weeklySchedule); printMsg(20); inOption = true; } break; 
+          // else { printScheduleFunction(weeklySchedule); printMsg(20); inOption = true; } break; 
+          else { print(buffer,"","","","","",0,0,1,weeklySchedulePtr); printMsg(20); inOption = true; } break;
 
         case(98):                                                 // dec 98 - "b" as char (ASCII) | Print schedule for specific track,group. 
           if (inOption) printMsg(19, string(1, qt), 20);
@@ -401,7 +406,7 @@ int main() {
             int groupOrLaneNumber; std::cout << "Enter 'g' for group or 'l' for lane: " << (qt = _getch()) << endl;
             if (qt == 103 || qt == 108) { std::cout << "Enter " << (qt == 103 ? "group" : "lane") << " number: "; std::cin >> groupOrLaneNumber; } 
             else { std::cerr << "\nInvalid option. Use 'g' for group or 'l' for lane.\n"; break; }
-            printScheduleForGroupOrLane(buffer, weeklySchedule, qt, groupOrLaneNumber, timestamp(1)); printMsg(12, "", 20);
+            printScheduleForGroupOrLane(buffer, weeklySchedulePtr, qt, groupOrLaneNumber, timestamp(1)); printMsg(12, "", 20);
             inOption = true; 
           } break;
 
@@ -418,5 +423,6 @@ int main() {
       }
     }
   } 
+
   return 0;
 }
