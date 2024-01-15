@@ -113,16 +113,6 @@ void printMsg(int _window, string _text = "", int _w2 = -1, string _text2 = "", 
   } if (_w2 != -1) printMsg(_w2, _text2, -1, "", _setw, eqCount);
 }
 
-// // Tool Function 4 | Used to print the schedule. (Main loop, options a,b,c)
-// using PrintScheduleFunction = void (*)(const WeeklySchedule&); // Using a function pointer
-// // This printWeeklySchedule function uses the printSchedule function to output the weekly schedule
-// void printWeeklySchedule(const WeeklySchedule& schedule) {
-//   printSchedule(buffer, schedule, timestamp(1));
-//   printSchedule(cout, schedule, timestamp(1), 1);
-//   // printMsg(12);
-//   printMsg(10);
-// } PrintScheduleFunction printScheduleFunction = printWeeklySchedule;
-
 // Tool Function 5 | Used by "ManageGroups" to print list of students per each group. (Main loop, option d - 1)
 template <typename T0, typename T1, typename T2, typename T3, typename T4>
 void print(std::ostream& os, T0 const& t0, T1 const& t1, T2 const& t2, T3 const& t3, T4 const& t4, 
@@ -399,7 +389,7 @@ int main() {
           if (inOption) printMsg(19, string(1, qt), 20); 
           // else { printScheduleFunction(weeklySchedule); printMsg(20); inOption = true; } break; 
           else { print(buffer,"","","","","",0,0,1,weeklySchedulePtr); printMsg(20); inOption = true; } break;
-
+        
         case(98):                                                 // dec 98 - "b" as char (ASCII) | Print schedule for specific track,group. 
           if (inOption) printMsg(19, string(1, qt), 20);
           else {
@@ -413,13 +403,6 @@ int main() {
         case(99):                                                 // dec 99 - "c" as char (ASCII) | Print schedule for specific instructor, student.
           if (inOption) printMsg(19, string(1, qt), 20);
           else {
-            // std::string identifier;
-            // char personOption;
-            // std::cout << "Enter 's' for student or 'i' for instructor: ";
-            // std::cin >> personOption;
-            // std::cout << "Enter " << (personOption == 's' ? "phone number (in the format: \"+38(095)4779450\")" : "last name") << ": ";
-            // std::cin >> identifier;
-
             std::string id; cout << "Only press 's' key for student or 'i' key for instructor: " << (qt = _getch()) << endl;
             if (qt == 115 || qt == 105) 
               { cout << "Enter " << (qt == 115 ? "phone number (in the format: \"+38(095)4779450\"):" : "last name:"); cin >> id;} 
