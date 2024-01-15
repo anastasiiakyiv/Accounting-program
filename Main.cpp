@@ -101,7 +101,7 @@ void printMsg(int _window, string _text = "", int _w2 = -1, string _text2 = "", 
   case 16: cout << endl << string(2, '=') << setw(_setw) << left << _text << string(eqCount, '=') << endl; break;
   case 17: cout << string(77, '-') << endl << setw(2) << left << "|" << setw(5) << _text; break;
   case 18: cout << setw(2) << left << "|" << setw(_setw) << _text << setw(2) << right << "|" << endl; break;
-  case 19: cout << "\nYou have pressed the key \"" << _text <<"\". There is no such option in this menu. Please try again.\n\n"; break;
+  case 19: cout << "\nYou have pressed the key \"" << _text <<"\". There is no such option in this submenu. Please try again.\n\n"; break;
   case 20: 
     printMsg(17, "TAB"); printMsg(18, "Back to the previous menu.", -1, ""); 
     printMsg(17, "ESC"); printMsg(18, "Exit the program.", -1, ""); cout << string(77, '-'); break;
@@ -403,16 +403,31 @@ int main() {
         case(98):                                                 // dec 98 - "b" as char (ASCII) | Print schedule for specific track,group. 
           if (inOption) printMsg(19, string(1, qt), 20);
           else {
-            int groupOrLaneNumber; std::cout << "Enter 'g' for group or 'l' for lane: " << (qt = _getch()) << endl;
+            int groupOrLaneNumber; std::cout << "Only press 'g' key for group or 'l' key for lane: " << (qt = _getch()) << endl;
             if (qt == 103 || qt == 108) { std::cout << "Enter " << (qt == 103 ? "group" : "lane") << " number: "; std::cin >> groupOrLaneNumber; } 
-            else { std::cerr << "\nInvalid option. Use 'g' for group or 'l' for lane.\n"; break; }
-            printScheduleForGroupOrLane(buffer, weeklySchedulePtr, qt, groupOrLaneNumber, timestamp(1)); printMsg(12, "", 20);
-            inOption = true; 
+            else 
+              { std::cerr << "\nInvalid option. Only 'g' or 'l' are allowed in that subMenu. Returning to the main menu.\n"; printMsg(0, "", 20); break;}
+            printScheduleForGroupOrLane(buffer, weeklySchedulePtr, qt, groupOrLaneNumber, timestamp(1)); printMsg(12, "", 20); inOption = true; 
           } break;
 
         case(99):                                                 // dec 99 - "c" as char (ASCII) | Print schedule for specific instructor, student.
-          if (inOption) printMsg(19, string(1, qt), 20); 
-          else { printMsg(15, " Printing schedule for the particular person. ", 13, "", 45, 21); inOption = true; } break; 
+          if (inOption) printMsg(19, string(1, qt), 20);
+          else {
+            // std::string identifier;
+            // char personOption;
+            // std::cout << "Enter 's' for student or 'i' for instructor: ";
+            // std::cin >> personOption;
+            // std::cout << "Enter " << (personOption == 's' ? "phone number (in the format: \"+38(095)4779450\")" : "last name") << ": ";
+            // std::cin >> identifier;
+
+            std::string id; cout << "Only press 's' key for student or 'i' key for instructor: " << (qt = _getch()) << endl;
+            if (qt == 115 || qt == 105) 
+              { cout << "Enter " << (qt == 115 ? "phone number (in the format: \"+38(095)4779450\"):" : "last name:"); cin >> id;} 
+            else 
+              { std::cerr << "Invalid option. Only 's' or 'i' are allowed in that submenu. Returning to the main menu.\n"; printMsg(0,"", 20); break;}
+            printScheduleForPerson(buffer, weeklySchedulePtr, qt, id, timestamp(1)); printMsg(12, "", 20); inOption = true;
+         }
+         break; 
 
         case(100):                                                // dec 100 - "d" as char (ASCII) | Modify/create groups. Add/remove students.
           if (inOption) printMsg(19, string(1, qt), 20); 
