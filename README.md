@@ -30,11 +30,11 @@
 5) Учень має прізвище, прізвище, ім’я одного з батьків, контактний номер телефона і
 кількість проплачених занять.
 
-**Реалізація**: програма містить чотири опції в головному меню:
-1) "a/ Print the schedule for all the tracks, instructors and groups." - Опція виведення на екран загального розкладу для всіх доріжок, інструкторів та груп.
-2) "b/ Print the schedule for the particular track or group." - Опція виведення на екран розкладу для обраної доріжки чи групи.
+**Реалізація**: програма містить чотири опції у головному меню:
+1) "a/ Print the schedule for all the tracks, instructors and groups." - Опція виведення на екран загального розкладу всіх доріжок, інструкторів та груп.
+2) "b/ Print the schedule for the particular track or group." - Опція виведення на екран розкладу для вибраної доріжки або групи.
 3) "c/ Print the schedule for the particular instructor or student." - Опція виведення на екран розкладу для інструктора чи студента.
-4) "d/ Create/modify group. Add/remove student to/from the group." - Опція внесення змін в групи студентів.
+4) "d/ Create/modify group. Add/remove student to/from the group." - Опція внесення змін до груп студентів.
 
-Клавіша TAB повертає користувача в попереднє меню.
+Клавіша TAB повертає користувача до попереднього меню.
 Клавіша ESC закриває програму.
