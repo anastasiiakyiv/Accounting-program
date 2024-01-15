@@ -3,6 +3,10 @@
 #include "Instructor.h"
 #include "Group.h"
 
+#define RESET   "\033[0m"
+#define BLUE    "\033[34m"
+#define YELLOW  "\033[33m"      /* Yellow */
+
 class Lesson
 {
 public:
@@ -51,35 +55,36 @@ public:
     std::vector<DailySchedule> days;
 };
 
-void printSchedule(std::ostream& os, const WeeklySchedule& schedule, std::string timestamp = "")
+void printSchedule(std::ostream& os, const WeeklySchedule& schedule, std::string timestamp = "", bool color = false)
 {
-    os << std::endl << timestamp << std::string(5, '=') << std::setw(35) << std::left << " Generalized weekly schedule. " 
-    << std::string(9,'=') << "\n\n" << std::string(73, '-') << "\n"
-    << std::setw(16) << std::left << "Time"
-    << std::setw(16) << std::left << "|Lane number"
-    << std::setw(21) << std::left << "|Instructor"
-    << std::setw(15) << std::left << "|Group number" << "    |"
-    << "\n-------------------------------------------------------------------------\n";
+    os << (color ? BLUE : "" ) << std::endl << timestamp << std::string(5, '=') 
+    << std::setw(30) << std::left << " Generalized weekly schedule. " 
+    << std::string(18,'=') << "\n\n" << std::string(77, '-') << "\n"
+    << std::setw(17) << std::left << "| Time"
+    << std::setw(16) << std::left << "| Lane number"
+    << std::setw(21) << std::left << "| Instructor"
+    << std::setw(18) << std::left << "| Group number" << "    |"
+    << "\n-----------------------------------------------------------------------------\n" << (color ? RESET : "" );
 
     for (const auto& day : schedule.days) {
-        os << std::setw(10) << std::left << day.day 
-           << "                                                              |"
-           << "\n-------------------------------------------------------------------------";
+        os << (color ? BLUE : "" ) << std::setw(10) << std::left << day.day 
+           << "                                                                  |"
+           << "\n-----------------------------------------------------------------------------" << (color ? RESET : "" );
 
         if (day.lessons.empty()) {
-           os << std::setw(15) << std::left << "No lessons for this day."
-           << "\n-------------------------------------------------------------------------\n";
+           os << (color ? BLUE : "" ) << std::setw(15) << std::left << "No lessons for this day."
+           << "\n-----------------------------------------------------------------------------\n" << (color ? RESET : "" );
         }
         else {
             for (const auto& lesson : day.lessons) {
-                os << std::endl
-                   << "|" << std::setw(15) << std::left << lesson.time
+                os << (color ? YELLOW : "" ) << std::endl
+                   << "|" << std::setw(16) << std::left << lesson.time
                    << "|" << std::setw(15) << std::left << lesson.lane->getLaneNumber()
                    << "|" << std::setw(20) << std::left << lesson.instructorName->getLastName()
-                   << "|" << std::setw(15) << std::left << lesson.groupNumber->getNumber() << "\t|";
+                   << "|" << std::setw(15) << std::left << lesson.groupNumber->getNumber() << "\t|" << (color ? RESET : "" );
             }
-            os << "\n"
-               << "-------------------------------------------------------------------------\n";
+            os << (color ? BLUE : "" ) << "\n"
+               << "-----------------------------------------------------------------------------\n" << (color ? RESET : "" );
         }
     }
 }
