@@ -31,9 +31,10 @@
 кількість проплачених занять.
 
 **Реалізація**: програма містить чотири опції в головному меню:
-a) "Print the schedule for all the tracks, instructors and groups." - Опція виведення на екран загального розкладу для всіх доріжок, інструкторів та груп.
-b) "Print the schedule for the particular track or group." - Опція виведення на екран розкладу для обраної доріжки чи групи.
-c) "Print the schedule for the particular instructor or student." - Опція виведення на екран розкладу для інструктора чи студента.
-d) "Create/modify group. Add/remove student to/from the group." - Опція внесення змін в групи студентів.
+1) "a/ Print the schedule for all the tracks, instructors and groups." - Опція виведення на екран загального розкладу для всіх доріжок, інструкторів та груп.
+2) "b/ Print the schedule for the particular track or group." - Опція виведення на екран розкладу для обраної доріжки чи групи.
+3) "c/ Print the schedule for the particular instructor or student." - Опція виведення на екран розкладу для інструктора чи студента.
+4) "d/ Create/modify group. Add/remove student to/from the group." - Опція внесення змін в групи студентів.
+
 Клавіша TAB повертає користувача в попереднє меню.
 Клавіша ESC закриває програму.
