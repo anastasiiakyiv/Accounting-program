@@ -29,10 +29,19 @@ public:
         // }
     }
   
-   int removeStudentFromGroup(std::shared_ptr<Student> student)
-   {
-    auto it = std::find(students.begin(), students.end(), student);
-      if (it == students.end()) return 0;
-      students.erase(it); return 1;
-   }
+void removeStudentFromGroup(const std::string& lastName) {
+    auto it = std::remove_if(students.begin(), students.end(),
+        [lastName](const std::shared_ptr<Student>& student)
+        { return student->getLastName() == lastName; });
+
+    if (it != students.end()) {
+        int groupNumber = getNumber();
+        students.erase(it, students.end());
+        std::cout << "Student with the last name \"" << lastName << "\" has been successfully removed from the Group " << groupNumber << "." << std::endl;
+    }
+    else {
+        int groupNumber = getNumber();
+        std::cout << "Student with the last name \"" << lastName << "\" was not found in the Group " << groupNumber << "." << std::endl;
+    }
+}
 };
