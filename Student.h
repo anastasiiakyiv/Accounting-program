@@ -20,24 +20,46 @@ public:
     firstName = _firstName, lastName = _lastName, parentName = _parentName;
   }
 
-  std::string getFirstName() const 
+    std::string getFirstName() const 
     {
       return firstName;
     }
-  std::string getLastName() const 
+    std::string getLastName() const 
     {
       return lastName;
     }
-  std::string getParentName() const 
+    std::string getParentName() const 
     {
       return parentName;
     }
-  std::string getPhoneNumber() const 
+    std::string getPhoneNumber() const 
     {
       return phoneNumber;
     }
-  int getPaidLessons() const 
+    int getPaidLessons() const 
     {
       return paidLessons;
+    }
+
+    void setFirstName(std::string _firstN) 
+    {
+      firstName = _firstN;
+    }
+    void setLastName(std::string _lastN) 
+    {
+      lastName = _lastN;
+    }
+    void setParentName(std::string _parentN) 
+    {
+      parentName = _parentN;
+    }
+    void getPhoneNumber(std::string _phoneN)
+    {
+      phoneNumber = _phoneN;
+    }
+
+    bool operator== (const Student& _obj)
+    {
+      return ((firstName == _obj.getFirstName()) && (lastName == _obj.getLastName()) && (parentName == _obj.getParentName()));
     }
 };

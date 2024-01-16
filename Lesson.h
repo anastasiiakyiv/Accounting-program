@@ -97,8 +97,8 @@ void printScheduleForGroupOrLane(std::ostream& os, std::shared_ptr<WeeklySchedul
         optionHeader = "Group Number";
     } else { std::cerr << "Invalid option. Use 'g' for group or 'l' for lane.\n"; return; }
 
-    os << std::endl << timestamp << std::string(5,'=') << " Weekly Schedule for " << optionLabel << " " << groupOrLaneNumber 
-       << " " << std::string(19,'=') << std::endl << std::string(77,'=') << std::endl 
+    os << std::endl << timestamp << std::string(5,'=') << " Weekly schedule for " << optionLabel << " " << groupOrLaneNumber << ". " 
+       << std::string(19,'=') << std::endl << std::string(77,'=') << std::endl 
        << std::left << std::setw(16) << "Day" << std::setw(16) << "|Time" << std::setw(21) 
        << "|" + optionHeader << std::setw(23) << "|Instructor" << "|"
        << std::endl << std::string(77,'-') << std::endl;
@@ -120,9 +120,9 @@ void printScheduleForGroupOrLane(std::ostream& os, std::shared_ptr<WeeklySchedul
 void printScheduleForPerson(std::ostream& os, std::shared_ptr<WeeklySchedule> schedule, 
                             char option, const std::string& identifier, std::string timestamp = "")
 {
-    os << std::endl << timestamp << "==== Weekly Schedule for ";
+    os << std::endl << timestamp << "==== Weekly schedule for ";
     if (option == 's') { // Search by student's phone number
-        os << "student with phone \"" << identifier << "\"" << std::endl << std::string(77, '-') << std::endl
+        os << "student with phone \"" << identifier << "\"." << std::endl << std::string(77, '-') << std::endl
            << std::left << std::setw(16) << "Day" << std::setw(17) << "|Time" << std::setw(16)
            << "|Lane" << std::setw(12) << "|Group" << std::setw(15) << "|Instructor" << "|\n" << std::string(77,'-') << std::endl;
         for (const auto& day : schedule.get()->days) {
@@ -138,7 +138,7 @@ void printScheduleForPerson(std::ostream& os, std::shared_ptr<WeeklySchedule> sc
         }
     }
     else if (option == 'i') { // Search by instructor's last name
-        os << "instructor with last name \"" << identifier << "\"" << std::endl << std::string(77, '-') << std::endl
+        os << "instructor with last name \"" << identifier << "\"." << std::endl << std::string(77, '-') << std::endl
            << std::left << std::setw(16) << "Day" << std::setw(17) << "|Time" << std::setw(16)
            << "|Lane" << std::setw(27) << "|Group" << "|\n" << std::string(77,'-') << std::endl;
 
