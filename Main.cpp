@@ -1,16 +1,3 @@
-// 	std::cout << BLUE << "25 METER POOL SCHEDULE\n\n" << RESET;
-// 	std::cout << RED << "FOR YOUTH DEVELOPMENT " << RESET << "Empowering young people to reach their full potential\n";
-// 	std::cout << RED << "FOR HEALTHY LIVING " << RESET << "Improving individual and community well-being\n";
-// 	std::cout << RED << "FOR SOCIAL RESPONSIBILITY " << RESET << "Providing support and inspiring action in our communities\n\n";
-// 	std::cout << "Choose one of the following options:\n";
-// 	std::cout << "1. " << std::endl;
-// 	std::cout << "2. " << std::endl;
-// 	std::cout << "3. " << std::endl;
-// 	std::cout << "4. " << std::endl;
-// 	std::cout << "5. Exit" << std::endl;
-// }
-
-
 /* Мета: написати програму для автоматизації обліку роботу басейна. У басейна є 3 плавальні доріжки. На кожній з доріжок в окремий момент часу може працювати тільки один тренер з певною групою. Кількість осіб в групі обмежена. Для простоти припустимо числом 10. Потрібно розробити програму, яка б дозволяла формувати розклад роботи тренера. Припустимо, що заклад працює з 9:00 до 21:00 за київським часом, кожного дня, крім неділі. Але окремий тренер може працювати якусь певну кількість годин і днів з цього часу. Потім його може змінити інший тренер. Потрібно створити список тренерів з прізвищами, номерами телефонів, ставками погодинної оплати і розкладом занять.
 
 В розкладі занять має бути вказано номер доріжки, час проведення занять і група. Має бути можливість формування зведеного розкладу по всіх доріжках, тренерах, групах. Має бути можливість створення і вилучення нових груп і додавання й вилучення дітей, які займаються плаванням. В кожного учасника групи має бути ім’я, ім’я одного з батьків, контактний номер телефона, обсяг проплачених коштів і прив’язка до певного списку занять. Потрібно розробити можливість пошуку учасника за контактним номером телефона і вивід на екран розкладу занять на тиждень для нього.
@@ -86,8 +73,9 @@ void printMsg(int _window, string _text = "", int _w2 = -1, string _text2 = "", 
     printMsg(17, "1");  printMsg(18, "Print the table with information for all students and groups."); 
     printMsg(17, "2");  printMsg(18, "Add the new student and assign it to the group."); 
     printMsg(17, "3");  printMsg(18, "Modify the information about the particular student."); 
-    printMsg(17, "4");  printMsg(18, "Add the new group."); break;
-    // printMsg(17, "4");  printMsg(18, "Remove the student from the group."); break;
+    printMsg(17, "4");  printMsg(18, "Remove the student from the group.");
+    printMsg(17, "5");  printMsg(18, "Add the new group."); break;
+  case 7: printMsg(16, " Enter the modified details: ", -1, "", 40, 35); printMsg(11, _text, 21, _text2); break;
   case 8: cout << " The list of the available groups (their group ids), excluding full (10 students already) groups:\n ";
     for (auto group : allGroups) 
       { if (group.get()->getAllStudents().size()==10) continue;
@@ -119,7 +107,6 @@ void printMsg(int _window, string _text = "", int _w2 = -1, string _text2 = "", 
   } if (_w2 != -1) printMsg(_w2, _text2, -1, "", _setw, eqCount);
 }
 
-<<<<<<< HEAD
 // Tool Function 4A | Used to check if the group, instructor, student object exist, and to return that object.
 Group* checkAndFindGroup(int _valueToFind) {
   for (auto _group : allGroups) { 
@@ -145,8 +132,6 @@ Student* checkAndFindStudent(shared_ptr<Student> _objToCheck=nullptr, string _va
   return nullptr;
 }
 
-=======
->>>>>>> 52ac2c7b3080584f63383c5c97fe9ca418db682e
 // Tool Function 5 | Used by "ManageGroups" to print list of students per each group. (Main loop, option d - 1)
 template <typename T0, typename T1, typename T2, typename T3, typename T4>
 void print(std::ostream& os, T0 const& t0, T1 const& t1, T2 const& t2, T3 const& t3, T4 const& t4, 
@@ -172,30 +157,55 @@ void print(std::ostream& os, T0 const& t0, T1 const& t1, T2 const& t2, T3 const&
 bool manageGroups(bool _tui, shared_ptr<Student> _student = nullptr, bool _add = true, bool _random = true, int _groupNum = 0, bool toSTDOUT = false) {
 
     if (!_tui) {
-        if (!_student)
-        {
-            printMsg(14, "The \"_student\" object was passed with \"nullptr\" value to the \"" + string(__func__) + "\" function."); return true;
+      if (!_student)
+      {
+          printMsg(14, "The \"_student\" object was passed with \"nullptr\" value to the \"" + string(__func__) + "\" function."); return true;
+      }
+      auto _stud = _student.get(); auto searchGroup = checkAndFindGroup(_groupNum); auto searchStudent = checkAndFindStudent(_student, "");
+      bool assigned = false; int assignedG = 0;
+
+      if (!searchGroup && !_random) {
+        printMsg(14, "Failed to add " + _stud->getFirstName() + " to the group \"" + to_string(_groupNum) + "\". This group does not exist.");
+      } 
+
+      for (auto group : allGroups) { auto groupp = group.get();
+        if (!_add) { 
+          for (auto& group : allGroups) group->removeStudentFromGroup(_student.get()->getLastName());
+          printMsg(16, "Student with the last name \"" + _stud->getLastName() + "\" has been removed from all groups.", 20, "", 59, 5); 
+          return true;
         }
-
-        bool assigned = false; int assignedG = 1;
-        for (auto _group : allGroups) {
-            auto groupp = _group.get();
-
-            if (!_add) { groupp->removeStudentFromGroup(_student); return true; }
-
-            if (groupp->getAllStudents().size() == 10) continue; auto searchRes = checkAndFindStudent(_student, ""); auto _stud = _student.get();
-            if (searchRes) {
-                printMsg(14, " Failed to add. The student " + _stud->getFirstName() + " " + _stud->getLastName() + " exist.");
-                if (toSTDOUT)
-                    printMsg(16, " Failed to add. The student " + _stud->getFirstName() + " " + _stud->getLastName() + " exist.", 20, "", 50, 25);
-                break;
+      
+        if (groupp->getAllStudents().size() == 10) continue;
+        else if (!_random) { 
+          if (groupp->getNumber() == _groupNum) { 
+            if (searchStudent) {
+              printMsg(14, " Failed to add. The student " + _stud->getFirstName() + " " + _stud->getLastName() + " exist.");
+              if (toSTDOUT)
+                printMsg(16, " Failed to add. The student " + _stud->getFirstName() + " " + _stud->getLastName() + " exist.", 20, "", 50, 25);
+              break;
+            } else {
+              groupp->addStudentToGroup(_student); assigned = true; assignedG = groupp->getNumber(); 
+              break;
             }
-            else { groupp->addStudentToGroup(_student); assigned = true; assignedG = groupp->getNumber(); break; }
+          } 
+          else continue;
+        } 
+        else if (_random) {
+          if (searchStudent) {
+            printMsg(14, " Failed to add. The student " + _stud->getFirstName() + " " + _stud->getLastName() + " exist.");
+            if (toSTDOUT)
+              printMsg(16, " Failed to add. The student " + _stud->getFirstName() + " " + _stud->getLastName() + " exist.", 20, "", 50, 25);
+            break;
+          } else {groupp->addStudentToGroup(_student); assigned = true; assignedG = groupp->getNumber(); break;}
+          break;
         }
-        if (!assigned)
-            _random ? printMsg(14, "Unfortunately, all the groups are full!") : printMsg(14, "Failed to add to the group \"" + to_string(_groupNum) + "\"");
-        else if (toSTDOUT) printMsg(16, " The entered student was successfully assigned to the group number " + to_string(assignedG) + " ", 20, "", 59, 5);
-        return assigned;
+      }
+              
+      if (!assigned && toSTDOUT)
+        _random ? printMsg(14, "Failed to add to the group" + to_string(_groupNum) + "\"") 
+          : printMsg(14, "Failed to add to the group \"" + to_string(_groupNum) + "\"");
+      else if (toSTDOUT) printMsg(16, " The entered student was successfully assigned to the group number " + to_string(assignedG) + " ", 20, "", 59, 5);
+      return assigned;
     }
 
   bool inOption2 = false, confirm = true; char qt2 = ' ';
@@ -291,7 +301,7 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student = nullptr, bool _add =
         case(50):                                                 // decimal 50 - "2" as char (ASCII) | Add the new student and assign it to the group.
           if (inOption2) printMsg(19, string(1, qt2), 20); 
           else {
-            printMsg(16, " Enter the details for the new student: ", -1, "", 59, 2);
+            printMsg(16, " Enter the details for the student: ", -1, "", 59, 2);
 
             // REFERENCE: checkInputLambda = [validateField](char& qt2, string& fieldVar, string fieldVarMeaning,
             //                                               bool fieldVarIsPNum=false, bool fieldVarIsNum=false) mutable {
@@ -302,7 +312,7 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student = nullptr, bool _add =
                 || !checkInput(groupN, " Group number (or leave it empty for the random available group)",0,1,1) ) 
               { inOption2 = false; firstN="", lastN="",parentN="",phoneNum="",paidL="",groupN=""; printMsg(4, "", 20); break; }
 
-            printMsg(16, " You've entered the new student with the following details. ", -1, "", 59, 14);
+            printMsg(16, " You've entered the student with the following details. ", -1, "", 59, 14);
             adjust_case(firstN); adjust_case(lastN); adjust_case(parentN);
 
             // REFERENCE: void print(std::ostream& os, T0 const& t0, T1 const& t1, T2 const& t2, T3 const& t3, T4 const& t4, 
@@ -322,7 +332,7 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student = nullptr, bool _add =
             else manageGroups(0, std::make_shared<Student>(firstN, lastN, parentN, phoneNum, stoi(paidL)),1,0,stoi(groupN),1);
             firstN="", lastN="",parentN="",phoneNum="",paidL="",groupN=""; inOption2 = true;
           } break;
-        
+      
          case(51):                                                 // decimal 52 - "3" as char (ASCII) | Modify the information.
           if (inOption2) printMsg(19, string(1, qt2), 20); 
           else {
@@ -344,7 +354,6 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student = nullptr, bool _add =
             if (!response) { inOption2 = false; firstN="", lastN="",parentN="",phoneNum="",paidL="",groupN=""; printMsg(4, "", 20); break; }
             printMsg(16, " We have tried to locate the person based on your input. ", -1, "", 59, 14);
             print(cout, "First name", "Last name", "Parent name", "Phone number", "Paid lessons",0,0,1);
-            cout << "searchRes = " << (bool)searchRes << endl;
             if (searchRes) {
               print(cout, searchRes->getFirstName(), searchRes->getLastName(), searchRes->getParentName(), 
                    searchRes->getPhoneNumber(), searchRes->getPaidLessons(), 0,0,1); 
@@ -370,64 +379,34 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student = nullptr, bool _add =
             { response = checkInput(phoneNum, " Phone number (in the format: \"+38(095)4779450\")", 1); searchRes->getPhoneNumber(phoneNum); }
             if (!response) {
                inOption2 = false; firstN="", lastN="",parentN="",phoneNum="",paidL="",groupN=""; printMsg(4, "", 20); break; 
+            } printMsg(16, " The information about the " + firstN + " " + lastN + " was successfully modified.", 20, "", 59, 8);
+          } break;
+
+          case(52):                                                 // decimal 52 - "4" as char (ASCII) | Remove the student from the group.
+          if (inOption2) printMsg(19, string(1, qt2), 20);
+          else {
+              std::string lastName;
+              std::cout << "Enter the last name of the student to remove: ";
+              std::cin >> lastName;
+              adjust_case(lastName);
+              for (auto& group : allGroups) {
+                  group->removeStudentFromGroup(lastName);
+              }
+              printMsg(12, "Student with the last name \"" + lastName + "\" has been removed from all groups.", 20);
+              inOption2 = true;
             } break;
-          } break;
 
-          case(52):                                                 // decimal 52 - "4" as char (ASCII) | Remove the student from the group..
-            if (inOption2) printMsg(19, string(1, qt2), 20); 
-            else {
-              printMsg(16, " Added one more group. ", -1, "", 24, 50);
-              int length = allGroups.size();
-              length = length + 1;
-              allGroups.push_back(std::make_shared<Group>(length));
-              printMsg(8,"", -1, "");
-              cout << "\n\n";
-              printMsg(20);
+          case(53):                                                 // decimal 53 - "5" as char (ASCII) | Add the new group.
+          if (inOption2) printMsg(19, string(1, qt2), 20); 
+          else {
+            printMsg(16, " Added one more group. ", -1, "", 24, 50);
+            int length = allGroups.size();
+            length = length + 1;
+            allGroups.push_back(std::make_shared<Group>(length));
+            printMsg(8,"", -1, "");
+            cout << "\n\n";
+            printMsg(20);
           } break;
-        
-        // case(52):                                                 // decimal 52 - "4" as char (ASCII) | Remove the student from the group..
-        //   if (inOption2) printMsg(19, string(1, qt2), 20); 
-        //   else {
-        //     printMsg(16, " Please press one of these options, in order to locate the student: ", -1, "", 54, 2);
-        //     printMsg(17, "5", 18, "Find the student using the first name."); printMsg(17, "6", 18, "Find the student using the last name."); 
-        //     printMsg(17, "7", 18, "Find the student using the parent name."); printMsg(17, "8", 18, "Find the student using the phone number.");
-        //     cout << string (77,'-');
-        //     qt2 = _getch(); bool response; Student* searchRes = nullptr;
-        //     if ((qt2 != 53) && (qt2 != 54) && (qt2 != 55) && (qt2 != 56)) 
-        //       { inOption2 = false; firstN="", lastN="",parentN="",phoneNum="",paidL="",groupN=""; system("CLS"); printMsg(20,"",-1,"", 54,21); break; }
-        //     else if (qt2 == 53) {
-        //       response = checkInput(firstN, " Student's first name", 0, 0); adjust_case(firstN); searchRes = checkAndFindStudent(nullptr, firstN);
-        //     }
-        //     else if (qt2 == 54) {
-        //       response = checkInput(lastN, " Student's last name", 0, 0); adjust_case(lastN);
-        //       if (searchRes = checkAndFindStudent(nullptr, lastN)) cout << "FOUND LAST" << endl;
-        //      }
-        //     else if (qt2 == 55) {
-        //       response = checkInput(parentN, " Parent's first name", 0, 0); adjust_case(parentN);
-        //       if (searchRes = checkAndFindStudent(nullptr, parentN)) cout << "FOUND PARENTS" << endl;
-        //     }
-        //     else if (qt2 == 56) {
-        //       response = checkInput(phoneNum, " Phone number (in the format: \"+38(095)4779450\")", 1);
-        //       if (searchRes = checkAndFindStudent(nullptr, phoneNum)) cout << "FOUND PHONE" << endl;
-        //     }
-        //     if (!response) { inOption2 = false; firstN="", lastN="",parentN="",phoneNum="",paidL="",groupN=""; printMsg(4, "", 20); break; }
-        //     printMsg(16, " We have tried to locate the person based on your input. ", -1, "", 59, 14);
-        //     print(cout, "First name", "Last name", "Parent name", "Phone number", "Paid lessons",0,0,1);
-        //     cout << "searchRes = " << (bool)searchRes << endl;
-        //     if (searchRes) {
-        //       print(cout, searchRes->getFirstName(), searchRes->getLastName(), searchRes->getParentName(), 
-        //            searchRes->getPhoneNumber(), searchRes->getPaidLessons(), 0,0,1); 
-        //       printMsg(16, " Please press \"ENTER\" if this is the right person to remove. ", 16, " Or press any other key to discard.", 54, 16);
-        //     }
-            
-        //     else { cout << "There are no students with the given information here." << endl; printMsg(20); }
-        //     qt2 = _getch(); if (qt2 != 13) { inOption2 = false; firstN="", lastN="",parentN="",phoneNum="",paidL="",groupN="",searchRes=nullptr; 
-        //     system("CLS"); printMsg(16, " Entered information was discarded.",20,"",54,21); break; }
-
-            // This does not work | crashes when trying to remove found item from the allGroups: (
-            //if (manageGroups(0,searchRes,0)) printMsg(16, "Removed the located student.", 20);
-            // allGroups[2].get()->removeStudentFromGroup(shared_ptr<Student>(searchRes));
-          // } break;
 
         default: 
           printMsg(19, string(1, qt2), 20); 
@@ -453,7 +432,7 @@ int main() {
   allInstructors.push_back(std::make_shared<Instructor>("Panchyshyn", "+38(067)7462681", 300.0));
   allInstructors.push_back(std::make_shared<Instructor>("Kinash", "+38(099)4884404", 400.0));
 
-  // Generating the 5 "Student" objects. Assigning them all to the "Group" with the "number" field = 3.
+  // Generating the 5 "Student" objects. Assigning them all to the group with the number 3.
   tmp0 = new string[5]{"Zhozefina","Ilona","Lesia","Ruslan","Nikodim"};
   tmp1 = new string[5]{"Tichenko","Chujkevych","Pidoplichko","Ovrah","Hrynishak"}, tmp3 = new string[5]{"Sharl","Ustym","Emil","Jonas","Fedir"};
   tmp2 = new string[5]{"+38(730)7621483","+38(088)4889072","+38(024)8871747","+380(668)495229","+38(040)4230308"}; tmp5 = new int[5]{4,10,9,8,3};
@@ -468,10 +447,15 @@ int main() {
   tmp2 = new string[5]{"+38(542)2578432","+38(472)7682276","+38(827)3367671","+38(352)3966987","+38(797)4122186"}; tmp5 = new int[5]{7,6,6,5,7};
   for (int i=0; i<=4; i++) manageGroups(0, std::make_shared<Student>(tmp0[i],tmp1[i],tmp3[i],tmp2[i], tmp5[i]));
 
+  // Generating another 5 "Student" objects. Assigning them to the group with the number 4.
+  tmp0 = new string[5]{"Rodan","Yehor","Atrei","Tsvitan","Dobrodum"};
+  tmp1 = new string[5]{"Lishchyn","Saveliev","Ternovyi","Ivasiuk","Andreichyn"}, tmp3 = new string[5]{"Vadym","Artur","Orest","Nikodim","Adrian"};
+  tmp2 = new string[5]{"+38(634)2933932","+38(572)8624376","+38(227)5368671","+38(452)4966987","+38(998)5122186"}; tmp5 = new int[5]{7,6,6,5,7};
+  for (int i=0; i<=4; i++) manageGroups(0, std::make_shared<Student>(tmp0[i],tmp1[i],tmp3[i],tmp2[i], tmp5[i]),1,0,4);
+
   // Generating the 2 "Student" objects. Assigning them all to the "Group" with the "number" field = 2.
+  manageGroups(0, std::make_shared<Student>("Ostap","KoMpAneC","Lyubodar","+38(078)3556676", 2),1,0,2);
   manageGroups(0, std::make_shared<Student>("Panas","turkevych","avrelii","+38(011)8728487", 4),1,0,2);
-  manageGroups(0, std::make_shared<Student>("Ostap","KoMpAneC","Lyubodar ","+38(078)3556676", 2),1,0,2);
-  manageGroups(0, nullptr,1,0,1); // Generating the "Student" object as "nullptr" and passing it to this same function.
   
   auto weeklySchedulePtr = std::make_shared<WeeklySchedule>();
   weeklySchedulePtr->days.push_back({ "Monday", {
@@ -513,20 +497,17 @@ int main() {
         {"12:45-13:30", allLanes[1], allInstructors[4], allGroups[1]},
   } });
 
-  // manageGroups(0, std::make_shared<Student>("Ostap","KoMpAneC","Lyubodar ","+38(078)3556676", 2),1,0,5,1); // Implement feature when group does not exist!
+  // Test | Trying to add the student, which does not exist, to the group "5", at this moment of runtime.
+  manageGroups(0, std::make_shared<Student>("Ostapp","KoMpAneCC","Lyubodar","+38(078)3556676", 2),1,0,5,0); 
 
-  // manageGroups(0, std::make_shared<Student>("Ostap","KoMpAneC","Lyubodar ","+38(078)3556676", 2),1,0,1,0);
-  // manageGroups(0, std::make_shared<Student>("Ostap","KoMpAneC","Lyubodar ","+38(078)3556676", 2),1,0,1,0);
-  // manageGroups(0, std::make_shared<Student>("Ostap","KoMpAneC","Lyubodar ","+38(078)3556676", 2),1,0,1,0);
-  // manageGroups(0, std::make_shared<Student>("Ostap","KoMpAneC","Lyubodar ","+38(078)3556676", 2),1,0,1,0);
-  // manageGroups(0, std::make_shared<Student>("Ostap","KoMpAneC","Lyubodar ","+38(078)3556676", 2),1,0,1,0);
-  // manageGroups(0, std::make_shared<Student>("Ostap","KoMpAneC","Lyubodar ","+38(078)3556676", 2),1,0,1,0);
-  // manageGroups(0, std::make_shared<Student>("Ostap","KoMpAneC","Lyubodar ","+38(078)3556676", 2),1,0,1,0);
+  // Test | Trying to add the student, which does exist, to the group "1", at this moment of runtime.
+  manageGroups(0, std::make_shared<Student>("Ostap","KoMpAneC","Lyubodar","+38(078)3556676", 2),1,0,1,0);
 
-  // manageGroups(0, std::make_shared<Student>("Panap","turkevych","avrelii","+38(011)8728487", 4),0,0,2);
-  // auto panap = std::make_shared<Student>("Panap","turkevych","avrelii","+38(011)8728487", 4);
-  // manageGroups(0,panap,1,0,2,0);
-  // allGroups[2].get()->removeStudentFromGroup(panap);
+  // Test | Trying to add the student, which does exist, to the random group, at this moment of runtime.
+  manageGroups(0, std::make_shared<Student>("Ostap","KoMpAneC","Lyubodar","+38(078)3556676", 2),1);
+
+  // Test | Passing the "nullptr" as an attempt to generate the "Student".
+  manageGroups(0, nullptr,1,0,1); 
 
   char qt = ' '; bool inOption = false;
   printMsg(0, "", 20); 
@@ -540,14 +521,10 @@ int main() {
         case(97):                                                 // dec 97 - "a" as char (ASCII) | Print generalized schedule.
           if (inOption) printMsg(19, string(1, qt), 20); 
           else { print(buffer,"","","","","",0,0,1,weeklySchedulePtr); printMsg(20); inOption = true; } break;
-<<<<<<< HEAD
 
           // REFERENCE: void print(std::ostream& os, T0 const& t0, T1 const& t1, T2 const& t2, T3 const& t3, T4 const& t4, 
                                 // bool last=false, bool groupName=false, bool color=false, shared_ptr<WeeklySchedule> scheduleObj=nullptr)
 
-=======
-        
->>>>>>> 52ac2c7b3080584f63383c5c97fe9ca418db682e
         case(98):                                                 // dec 98 - "b" as char (ASCII) | Print schedule for specific track,group. 
           if (inOption) printMsg(19, string(1, qt), 20);
           else {
@@ -572,7 +549,6 @@ int main() {
         case(100):                                                // dec 100 - "d" as char (ASCII) | Modify/create groups. Add/remove students.
           if (inOption) printMsg(19, string(1, qt), 20); 
           else { manageGroups(1); printMsg(0, "", 20); } break;
-
         default: 
           printMsg(19, string(1, qt), 20); break;
       }
