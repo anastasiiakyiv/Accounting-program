@@ -119,6 +119,7 @@ void printMsg(int _window, string _text = "", int _w2 = -1, string _text2 = "", 
   } if (_w2 != -1) printMsg(_w2, _text2, -1, "", _setw, eqCount);
 }
 
+<<<<<<< HEAD
 // Tool Function 4A | Used to check if the group, instructor, student object exist, and to return that object.
 Group* checkAndFindGroup(int _valueToFind) {
   for (auto _group : allGroups) { 
@@ -144,6 +145,8 @@ Student* checkAndFindStudent(shared_ptr<Student> _objToCheck=nullptr, string _va
   return nullptr;
 }
 
+=======
+>>>>>>> 52ac2c7b3080584f63383c5c97fe9ca418db682e
 // Tool Function 5 | Used by "ManageGroups" to print list of students per each group. (Main loop, option d - 1)
 template <typename T0, typename T1, typename T2, typename T3, typename T4>
 void print(std::ostream& os, T0 const& t0, T1 const& t1, T2 const& t2, T3 const& t3, T4 const& t4, 
@@ -537,10 +540,14 @@ int main() {
         case(97):                                                 // dec 97 - "a" as char (ASCII) | Print generalized schedule.
           if (inOption) printMsg(19, string(1, qt), 20); 
           else { print(buffer,"","","","","",0,0,1,weeklySchedulePtr); printMsg(20); inOption = true; } break;
+<<<<<<< HEAD
 
           // REFERENCE: void print(std::ostream& os, T0 const& t0, T1 const& t1, T2 const& t2, T3 const& t3, T4 const& t4, 
                                 // bool last=false, bool groupName=false, bool color=false, shared_ptr<WeeklySchedule> scheduleObj=nullptr)
 
+=======
+        
+>>>>>>> 52ac2c7b3080584f63383c5c97fe9ca418db682e
         case(98):                                                 // dec 98 - "b" as char (ASCII) | Print schedule for specific track,group. 
           if (inOption) printMsg(19, string(1, qt), 20);
           else {
