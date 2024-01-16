@@ -416,6 +416,19 @@ int main() {
           if (inOption) printMsg(19, string(1, qt), 20); 
           else { manageGroups(1); printMsg(0, "", 20); } break;
 
+        case(101):  // dec 100 - "e" as char (ASCII) | Remove the student from the group
+            if (inOption) printMsg(19, string(1, qt), 20);
+            else {
+                std::string lastName;
+                std::cout << "Enter the last name of the student to remove: ";
+                std::cin >> lastName;
+                for (auto& group : allGroups) {
+                    group->removeStudentFromGroup(lastName);
+                }
+                printMsg(12, "Student with the last name \"" + lastName + "\" has been removed from all groups.", 20);
+                inOption = true;
+             } break;
+
         default: 
           printMsg(19, string(1, qt), 20); break;
       }
