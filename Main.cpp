@@ -59,6 +59,28 @@ void save_file() {                                            // Tool Function 2
   myfile.close();
 }
 
+// Tool Function 5 | Used by "ManageGroups" to print list of students per each group. (Main loop, option d - 1)
+template <typename T0, typename T1, typename T2, typename T3, typename T4>
+void print(std::ostream& os, T0 const& t0, T1 const& t1, T2 const& t2, T3 const& t3, T4 const& t4, 
+  bool last=false, bool groupName=false, bool color=false, shared_ptr<WeeklySchedule> scheduleObj=nullptr)
+{
+  if (scheduleObj) 
+   {if (!color) { printSchedule(os, scheduleObj, timestamp(1)); textToSave.append(buffer.str()); cout << buffer.str(); buffer.str(""); return; }
+    printSchedule(os, scheduleObj, timestamp(1)); printSchedule(cout, scheduleObj, timestamp(1), 1); 
+    textToSave.append(buffer.str()); buffer.str(""); return; }
+
+  if (groupName) { 
+    os << (color ? BLUE : "" ) << "." << string(75, '-') << "." << endl << setw(1) << left 
+    << "|" << std::setw(13) << left << " Group ID |   " << setw(61) << t0 << right << "|\n" << (color ? RESET : "" ); return; 
+  }
+
+  if (last) { os << (color ? YELLOW : "" ) << "*" << string(13, '-') << "*" << string(13, '-') << "*" << string(14, '-') << "*" 
+    << string(17, '-') << "*" << string(14, '-') << "*" << (color ? RESET : "" ) << endl; return; } 
+
+  os << (color ? YELLOW : "" ) << "." << string(75, '-') << ".\n" << "| " << setw(12) << left << t0 << "| " << setw(12) << left << t1 << "| " 
+  << setw(13) << left << t2 << "| " << setw(16) << left << t3 << "| " << setw(12) << left << t4 << setw(2) << right << " |\n" << (color ? RESET : "" );
+}
+
 // Tool Function 3 | Prints (or writes right into file) specific message based on the passed "_window". (Used by other functions)
 void printMsg(int _window, string _text = "", int _w2 = -1, string _text2 = "", int _setw=67, int eqCount=-1) {  // 
   switch (_window) {
@@ -75,6 +97,19 @@ void printMsg(int _window, string _text = "", int _w2 = -1, string _text2 = "", 
     printMsg(17, "3");  printMsg(18, "Modify the information about the particular student."); 
     printMsg(17, "4");  printMsg(18, "Remove the student from the group.");
     printMsg(17, "5");  printMsg(18, "Add the new group."); break;
+  // case 5:
+
+  case 6: 
+    printMsg(22, " Printing all students from all the groups ", 10, "", 40, 24);
+    for (auto _group : allGroups) { auto _groupp = _group.get();
+      print(buffer, _groupp->getNumber() ,"", "", "", "", 0, 1); // Print into the "Buffer", eventually, File - not colored.
+      print(buffer, "First name" ,"Last name", "Parent name", "Phone number", "Paid lessons");
+      for (auto _student : _groupp->getAllStudents()) 
+      { auto _studentt = _student.get();                        // Print into the "Buffer", eventually, File - not colored.
+        print(buffer, _studentt->getFirstName(), _studentt->getLastName(), _studentt->getParentName(), 
+        _studentt->getPhoneNumber(), _studentt->getPaidLessons()); }
+    } print(buffer, 0, 0, 0, 0, 0, 1); printMsg(10); break;
+  
   case 7: printMsg(16, " Enter the modified details: ", -1, "", 40, 35); printMsg(11, _text, 21, _text2); break;
   case 8: cout << " The list of the available groups (their group ids), excluding full (10 students already) groups:\n ";
     for (auto group : allGroups) 
@@ -84,7 +119,7 @@ void printMsg(int _window, string _text = "", int _w2 = -1, string _text2 = "", 
   case 10: textToSave.append(buffer.str()); buffer.str(""); break;
   case 11: cout << endl << _text << " : " << _text2 << endl; break;
   case 12: textToSave.append(buffer.str()); cout << buffer.str(); buffer.str(""); break;
-  case 13: cout << buffer.str(); buffer.str(""); break; // Prints the content of "buffer" to STDOUT. Cleans "buffer".
+  case 13: cout << buffer.str(); buffer.str(""); break;        // Prints the content of "buffer" to STDOUT. Cleans "buffer".
   case 14: 
     buffer << endl << string(73, '-') << endl << timestamp(1) << "A problem occured in the program :\n" << _text << endl << string(73, '-'); 
     textToSave.append(buffer.str()); buffer.str(""); break;
@@ -103,6 +138,8 @@ void printMsg(int _window, string _text = "", int _w2 = -1, string _text2 = "", 
     printMsg(17, "TAB"); printMsg(18, "Back to the previous menu.", -1, ""); 
     printMsg(17, "BACKSPACE"); cout << setw(2) << left << " | " << setw(61) << "Remove the last character." << setw(2) << right << "|" << endl;
     printMsg(17, "ESC"); printMsg(18, "Exit the program.", -1, ""); cout << string(77, '-'); break;
+  case 22:
+    buffer << endl << timestamp(1) << string(3, '=') << setw(50) << left << _text << endl << string(77, '-') << endl; 
   default: break;
   } if (_w2 != -1) printMsg(_w2, _text2, -1, "", _setw, eqCount);
 }
@@ -132,26 +169,7 @@ Student* checkAndFindStudent(shared_ptr<Student> _objToCheck=nullptr, string _va
   return nullptr;
 }
 
-// Tool Function 5 | Used by "ManageGroups" to print list of students per each group. (Main loop, option d - 1)
-template <typename T0, typename T1, typename T2, typename T3, typename T4>
-void print(std::ostream& os, T0 const& t0, T1 const& t1, T2 const& t2, T3 const& t3, T4 const& t4, 
-  bool last=false, bool groupName=false, bool color=false, shared_ptr<WeeklySchedule> scheduleObj=nullptr)
-{
-  if (scheduleObj) 
-   {if (!color) { printSchedule(os, scheduleObj, timestamp(1)); printMsg(12); return; }
-    printSchedule(os, scheduleObj, timestamp(1)); printSchedule(cout, scheduleObj, timestamp(1), 1); printMsg(10); return; }
 
-  if (groupName) { 
-    os << (color ? BLUE : "" ) << "." << string(75, '-') << "." << endl << setw(1) << left 
-    << "|" << std::setw(13) << left << " Group ID |   " << setw(61) << t0 << right << "|\n" << (color ? RESET : "" ); return; 
-  }
-
-  if (last) { os << (color ? YELLOW : "" ) << "*" << string(13, '-') << "*" << string(13, '-') << "*" << string(14, '-') << "*" 
-    << string(17, '-') << "*" << string(14, '-') << "*" << (color ? RESET : "" ) << endl; return; } 
-
-  os << (color ? YELLOW : "" ) << "." << string(75, '-') << ".\n" << "| " << setw(12) << left << t0 << "| " << setw(12) << left << t1 << "| " 
-  << setw(13) << left << t2 << "| " << setw(16) << left << t3 << "| " << setw(12) << left << t4 << setw(2) << right << " |\n" << (color ? RESET : "" );
-}
 
 // Tool Function 6 | If "tui" (terminal-user-interface) is false, then add/remove the student non-interactively.
 bool manageGroups(bool _tui, shared_ptr<Student> _student = nullptr, bool _add = true, bool _random = true, int _groupNum = 0, bool toSTDOUT = false) {
@@ -276,26 +294,27 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student = nullptr, bool _add =
           if (inOption2) printMsg(19, string(1, qt2), 20); 
           else {  
             printMsg(15, " Printing all students from all the groups ", -1, "", 40, 24);
+
             for (auto _group : allGroups) { auto _groupp = _group.get();
-                                                                  // Print into the "Buffer", eventually, File - not colored.
-              print(buffer, _groupp->getNumber() ,"", "", "", "", 0, 1);
-              print(buffer, "First name" ,"Last name", "Parent name", "Phone number", "Paid lessons");
+              //                                                     // Print into the "Buffer", eventually, File - not colored.
+              // print(buffer, _groupp->getNumber() ,"", "", "", "", 0, 1);
+              // print(buffer, "First name" ,"Last name", "Parent name", "Phone number", "Paid lessons");
                                                                   // Print into the STDOUT - Colored.
               print(cout, _groupp->getNumber() ,"", "", "", "", 0, 1, 1);
               print(cout, "First name" ,"Last name", "Parent name", "Phone number", "Paid lessons", 0, 0, 1);
               for (auto _student : _groupp->getAllStudents()) 
               { auto _studentt = _student.get();
-                                                                  // Print into the "Buffer", eventually, File - not colored.
-                print(buffer, _studentt->getFirstName(), _studentt->getLastName(), _studentt->getParentName(), 
-                _studentt->getPhoneNumber(), _studentt->getPaidLessons());
+                //                                                   // Print into the "Buffer", eventually, File - not colored.
+                // print(buffer, _studentt->getFirstName(), _studentt->getLastName(), _studentt->getParentName(), 
+                // _studentt->getPhoneNumber(), _studentt->getPaidLessons());
                                                                   // Print into the STDOUT - Colored.
                 print(cout, _studentt->getFirstName(), _studentt->getLastName(), _studentt->getParentName(), 
                 _studentt->getPhoneNumber(), _studentt->getPaidLessons(), 0, 0, 1);
               }
             } 
-            print(buffer, 0, 0, 0, 0, 0, 1);                      // Print into the "Buffer", eventually, File - not colored.
+            // print(buffer, 0, 0, 0, 0, 0, 1);                      // Print into the "Buffer", eventually, File - not colored.
             print(cout, 0, 0, 0, 0, 0, 1, 0, 1);                  // Print into the STDOUT - Colored.
-            printMsg(10); inOption2 = true; 
+            printMsg(6); inOption2 = true; 
           } break; 
 
         case(50):                                                 // decimal 50 - "2" as char (ASCII) | Add the new student and assign it to the group.
@@ -331,7 +350,7 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student = nullptr, bool _add =
             if (groupN[0] == '(') manageGroups(0, std::make_shared<Student>(firstN, lastN, parentN, phoneNum, stoi(paidL)),1,1,0,1);
             else manageGroups(0, std::make_shared<Student>(firstN, lastN, parentN, phoneNum, stoi(paidL)),1,0,stoi(groupN),1);
             firstN="", lastN="",parentN="",phoneNum="",paidL="",groupN=""; inOption2 = true;
-          } break;
+          } printMsg(6); break;
       
          case(51):                                                 // decimal 52 - "3" as char (ASCII) | Modify the information.
           if (inOption2) printMsg(19, string(1, qt2), 20); 
@@ -380,7 +399,7 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student = nullptr, bool _add =
             if (!response) {
                inOption2 = false; firstN="", lastN="",parentN="",phoneNum="",paidL="",groupN=""; printMsg(4, "", 20); break; 
             } printMsg(16, " The information about the " + firstN + " " + lastN + " was successfully modified.", 20, "", 59, 8);
-          } break;
+          } printMsg(6); break;
 
           case(52):                                                 // decimal 52 - "4" as char (ASCII) | Remove the student from the group.
           if (inOption2) printMsg(19, string(1, qt2), 20);
@@ -394,7 +413,7 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student = nullptr, bool _add =
               }
               printMsg(12, "Student with the last name \"" + lastName + "\" has been removed from all groups.", 20);
               inOption2 = true;
-            } break;
+            } printMsg(6); break;
 
           case(53):                                                 // decimal 53 - "5" as char (ASCII) | Add the new group.
           if (inOption2) printMsg(19, string(1, qt2), 20); 
@@ -406,7 +425,7 @@ bool manageGroups(bool _tui, shared_ptr<Student> _student = nullptr, bool _add =
             printMsg(8,"", -1, "");
             cout << "\n\n";
             printMsg(20);
-          } break;
+          } printMsg(6); break;
 
         default: 
           printMsg(19, string(1, qt2), 20); 
